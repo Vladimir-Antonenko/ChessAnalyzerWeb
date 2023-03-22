@@ -11,6 +11,7 @@ internal class LichessService : IPositionEvaluation, IPgn
     private readonly IHttpClientFactory httpClientFactory;
     private readonly CancellationToken token;
 
+
     internal string Login { get; private set; }
 
     private LichessService(IMapper mapper, IHttpClientFactory httpClient, string loginLichess, CancellationToken token)
