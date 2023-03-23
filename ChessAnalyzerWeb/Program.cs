@@ -1,5 +1,6 @@
 using ChessAnalyzerApi.Hubs;
 using ChessAnalyzerApi.ExternalApi.Lichess.Mapping;
+using ChessAnalyzerApi.ExternalApi.Lichess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,12 @@ builder.Services.AddControllers();
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
-    .AddHttpClient()
     .AddSignalR();
+
+builder.Services.AddHttpClient<LichessService>(cfg =>
+{
+    cfg.BaseAddress = new Uri("https://lichess.org/api/");
+});
 
 builder.Services.AddAutoMapper(config =>
         {

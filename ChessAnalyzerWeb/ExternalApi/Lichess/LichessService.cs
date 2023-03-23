@@ -8,21 +8,43 @@ namespace ChessAnalyzerApi.ExternalApi.Lichess;
 internal class LichessService : IPositionEvaluation, IPgn
 {   
     private readonly IMapper mapper;
-    private readonly IHttpClientFactory httpClientFactory;
+    private readonly HttpClient httpClient;
     private readonly CancellationToken token;
 
 
     internal string Login { get; private set; }
 
-    private LichessService(IMapper mapper, IHttpClientFactory httpClient, string loginLichess, CancellationToken token)
+    private LichessService(IMapper mapper, HttpClient httpClient, string loginLichess, CancellationToken token)
     {
         this.mapper = mapper;
-        this.httpClientFactory = httpClient;
+        this.httpClient = httpClient;
         Login = loginLichess;
         this.token = token;
     }
 
-    private string EvaluateString(string fen, int multiPv = 1) => @$"https://lichess.org/api/cloud-eval?fen={fen}&multiPv={multiPv}"; // строка для получения оценки с lichess
+    ////public WeatherForecastController(ILogger<WeatherForecastController> logger, IHubContext<ChatHub> hubContext, HttpClient http)
+    ////{
+    ////    _hubContext = hubContext;
+    ////    _logger = logger;
+    ////    _httpClient = http;
+    ////    _httpClient.BaseAddress = new Uri("http://something.com/api/"); // пример задания базовой строки (должна быть / в конце) -- такую штуку можно задать сразу в файле program!
+    ////    var response = await _httpClient.GetAsync("resource/7"); // а у адреса не должно быть
+    ////    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token"); // тоже у клиента задать токен сразу
+    ////}
+
+    ////// про токен надо подумать
+    //////https://lichess.org/api#tag/Opening-Explorer/operation/openingExplorerMasterGame // БД с играми
+    ////// http://tablebase.lichess.ovh/standard?fen=4k3/6KP/8/8/8/8/7p/8_w_-_-_0_1 // прям конечная точка
+    ////// deserialize
+    //////public async Task<UserModel> GetUserAsync(int userId)
+    //////{
+    //////    var result = await _httpClient.GetAsync($"api/users/{userId}");
+    //////    result.EnsureSuccessStatusCode();
+    //////    var response = await result.Content.ReadAsStringAsync();
+    //////    return DeserializeResult<UserModel>(response);
+    //////}
+
+    // !!!!!!!!!!!! Попробовать укоротить https://lichess.org/api/ и проверить работает или нет!
     private string GamesString(DateTime since = default, DateTime until = default) // строка для получения игр пользователя
     {
         string gameString = @$"https://lichess.org/api/games/user/{Login}?";
@@ -36,9 +58,8 @@ internal class LichessService : IPositionEvaluation, IPgn
     {
         LichessPgnModel lichessPgn = new();
         string allGames = string.Empty;
-        var client = httpClientFactory.CreateClient();
-
-        using (var response = await client.GetAsync(uri, token))
+ 
+        using (var response = await httpClient.GetAsync(uri, token))
         {
             if (response.IsSuccessStatusCode)
             {
@@ -66,9 +87,8 @@ internal class LichessService : IPositionEvaluation, IPgn
     public async Task<PositionEvaluation> GetPositionEvaluationAsync(string fen) // получить оценку позиции по заданному fen
     {
         LichessEvaluationModel instance = new();
-        var client = httpClientFactory.CreateClient();
 
-        using (var response = await client.GetAsync(EvaluateString(fen), token))
+        using (var response = await httpClient.GetAsync($"cloud-eval?fen={fen}&multiPv=1", token))
         {
             if (response.IsSuccessStatusCode)
             {
@@ -79,5 +99,5 @@ internal class LichessService : IPositionEvaluation, IPgn
         return mapper.Map<LichessEvaluationModel, PositionEvaluation>(instance);
     }
 
-    public static LichessService Create(IMapper mapper, IHttpClientFactory httpClient, string loginLichess, CancellationToken token) => new(mapper, httpClient, loginLichess, token); // фабрика
+    public static LichessService Create(IMapper mapper, HttpClient httpClient, string loginLichess, CancellationToken token) => new(mapper, httpClient, loginLichess, token); // фабрика
 }
