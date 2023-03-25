@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessAnalyzerApi", "ChessAnalyzerWeb\ChessAnalyzerApi.csproj", "{BBD3D1BC-771C-489B-9266-73E5ABD9249A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessAnalyzerApi", "ChessAnalyzerWeb\ChessAnalyzerApi.csproj", "{BBD3D1BC-771C-489B-9266-73E5ABD9249A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{B0957EDE-2DDF-4DF5-B1EA-FEE4E8062E46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{B0957EDE-2DDF-4DF5-B1EA-FEE4E8062E46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{D26CE4D6-6D92-4B24-AD45-3C20BF7B6039}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{D26CE4D6-6D92-4B24-AD45-3C20BF7B6039}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A0F882A6-2AD6-44AD-BCF1-4B0D9E24CA09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{A0F882A6-2AD6-44AD-BCF1-4B0D9E24CA09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

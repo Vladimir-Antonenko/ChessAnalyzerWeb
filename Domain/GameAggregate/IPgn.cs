@@ -2,5 +2,5 @@
 
 public interface IPgn
 {
-    public Task<Pgn> GetAllPgnGamesAsync();
+    public Task<Pgn> GetPgnGamesAsync(string login, DateTime since = default, DateTime until = default);
 }

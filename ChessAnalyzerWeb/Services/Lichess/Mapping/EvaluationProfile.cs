@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using AutoMapper;
-using ChessAnalyzerApi.ExternalApi.Lichess.Models;
+﻿using AutoMapper;
 using Domain.GameAggregate;
+using ChessAnalyzerApi.ExternalApi.Lichess.Models;
 
-namespace ChessAnalyzerApi.ExternalApi.Lichess.Mapping;
+namespace ChessAnalyzerApi.Services.Lichess.Mapping;
 
 public class EvaluationProfile : Profile
 {

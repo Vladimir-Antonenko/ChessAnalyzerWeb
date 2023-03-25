@@ -38,7 +38,7 @@
         // Добавление пользователя
         async function createUser(userName) {
 
-            const response = await fetch("api/FindPlayerGames", {
+            const response = await fetch("Analyze/FindPlayerGames", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({

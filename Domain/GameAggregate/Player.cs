@@ -51,7 +51,7 @@ public class Player
 
     public async Task GetAllGamesFromPgn(IPgn gameSourse) // получаем игры из pgn и заранее не знаем откуда именно они пришли
     {
-        var allGames = await gameSourse.GetAllPgnGamesAsync();
+        var allGames = await gameSourse.GetPgnGamesAsync(Name);
 
         foreach(var pgn in ChessHelper.GetSplittedPGNmass(allGames.Content))
         {

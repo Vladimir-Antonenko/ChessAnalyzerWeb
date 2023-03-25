@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using ChessAnalyzerApi.ExternalApi.Lichess.Models;
 using Domain.GameAggregate;
-using System.Linq;
 
-namespace ChessAnalyzerApi.ExternalApi.Lichess.Mapping;
+namespace ChessAnalyzerApi.Services.Lichess.Mapping;
 
 public class PgnProfile : Profile
 {

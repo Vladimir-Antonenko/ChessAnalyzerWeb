@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class PlayerRepository : RepositoryBase<Player>
+public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
 {
     public PlayerRepository(BaseContext context) : base(context)
     {
