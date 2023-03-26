@@ -2,8 +2,7 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="indexStyle.css" />
-    <script src="indexScript.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="indexStyle.css" />   
 </head>
 <body>
     <h2>Ввод пользователя Lichess</h2>
@@ -18,15 +17,14 @@
             <button id="resetBtn">Очистить</button>
         </p>
     </div>
-    <p id="analyzeBlock" hidden="hidden">
+    <div id="analyzeBlock" hidden>
         <p>
             Точность:<br />
             <input id="precision" type="number" value="0.5"/>
         </p>
-    <button id="analyzeBtn">Запустить анализ партий</button>
-    <button id="cancelBtn">Отменить анализ</button>
-    </p>
-    <script>
-    </script>
+        <button id="analyzeBtn">Запустить анализ партий</button>
+        <button id="cancelBtn">Отменить анализ</button>
+    </div>
+    <script src="indexScript.js" type="text/javascript"></script>
 </body>
 </html>

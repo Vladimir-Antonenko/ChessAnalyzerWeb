@@ -1,7 +1,7 @@
 ﻿// Добавление пользователя
 async function createUser(userName) {
 
-    const response = await fetch("Analyze/FindPlayerGames", {
+    const response = await fetch("/api/${userName}/FindPlayerGames", {
         method: "POST",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -11,6 +11,7 @@ async function createUser(userName) {
     if (response.ok === true) {
         // делаю доступным кнопку анализа
         let blockId = document.getElementById("analyzeBlock");
+        //blockId.setAttribute("visibility", "visible");
         blockId.removeAttribute("hidden");
     }
     else {
@@ -48,7 +49,7 @@ async function RunAnalyze() { // добавить сюда precision !!!!!!!!!
 }
 
 // отмена анализа партий
-document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze());
+//document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze());
 
 // запуск анализа партий
 document.getElementById("analyzeBtn").addEventListener("click", () => RunAnalyze());

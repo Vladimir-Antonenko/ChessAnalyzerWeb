@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ChessAnalyzerApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api")]
     public class AnalyzeController : ControllerBase
     {
         private readonly IPlayerRepository _playerRepository;
@@ -19,11 +19,12 @@ namespace ChessAnalyzerApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "FindPlayerGames")]
-        public async Task<bool> FindPlayerGames(string login)
+        [Route("{userName}/FindPlayerGames")]
+        [HttpPost]
+        public async Task<bool> FindPlayerGames([FromRoute] string userName) //    // логин nightQueen111
         {
-            var player = await _playerRepository.FindByName(login);
-            player ??= Player.Create(login);
+            var player = await _playerRepository.FindByName(userName);
+            player ??= Player.Create(userName);
             //AddProgressHandlerEvents(LichessService.processMsgHander); // скорее всего 
             await player.GetAllGamesFromPgn(_lichess);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
