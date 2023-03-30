@@ -31,6 +31,7 @@ async function CancelAnalyze() {
     const response = await fetch("/api/CancelAnalyze", {
         method: "GET",
         headers: { "Accept": "application/json" }
+
     });
     // если запрос прошел нормально
     if (response.ok === true)
@@ -39,17 +40,24 @@ async function CancelAnalyze() {
 
 async function RunAnalyze() { // добавить сюда precision !!!!!!!!!
 
-    const response = await fetch("/api/RunAnalyze", {
+    const name = document.getElementById("userName").value;
+    const precision = document.getElementById("precision").value;
+
+    const response = await fetch("/api/RunAnalyze/${name}", {
         method: "GET",
-        headers: { "Accept": "application/json" }
+        headers: { "Accept": "text/html" }
     });
+
     // если запрос прошел нормально
     if (response.ok === true)
+    {
         alert("Партии проанализированы");
+        window.location.replace("адрес где генерируется страница!") // тут же указать логин и номер страницы
+    }        
 }
 
 // отмена анализа партий
-//document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze());
+document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze());
 
 // запуск анализа партий
 document.getElementById("analyzeBtn").addEventListener("click", () => RunAnalyze());

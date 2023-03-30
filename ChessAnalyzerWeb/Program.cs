@@ -1,9 +1,10 @@
+using Infrastructure;
+using ChessAnalyzerApi;
 using ChessAnalyzerApi.Hubs;
-using ChessAnalyzerApi.Services;
+using Microsoft.EntityFrameworkCore;
+using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.Lichess.Mapping;
-using Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 try
 {
@@ -17,7 +18,6 @@ try
     builder.Services.AddDbContext<BaseContext>(options =>
      options.UseSqlite("Data Source=BaseAnalyzeGames.db")); // доработать чтобы вынести строку подключения в файл
 
-
    // options.UseSqlite("ConnectionStrings:DefaultConnection"));
     //  UseSqlite($"Data Source=BaseAnalyzeGames.db"
 
@@ -27,6 +27,7 @@ try
         .RegisterRepositories()
         .AddSignalR();
 
+    builder.Services.AddEvaluationServices();
     builder.Services.AddScoped<ILichess, LichessService>();
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();
 

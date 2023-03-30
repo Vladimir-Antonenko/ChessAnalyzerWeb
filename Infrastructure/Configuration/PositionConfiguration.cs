@@ -35,5 +35,7 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
 
         builder.Property(x => x.IsMistake)
             .HasComment("Является ли ход в партии ошибкой");
+
+        builder.Navigation(x => x.PositionEvaluation).AutoInclude(); // автоматически подгружаю оценку с позицией
     }
 }

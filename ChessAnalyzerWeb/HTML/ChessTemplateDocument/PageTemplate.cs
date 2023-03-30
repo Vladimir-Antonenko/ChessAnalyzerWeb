@@ -3,20 +3,31 @@ using System.IO;
 using System.Collections.Generic;
 using HtmlAgilityPack;
 using System.Linq;
+using Domain.GameAggregate;
+using System.Numerics;
+using ChessAnalyzerApi.Extensions;
+using Domain.Extensions;
 
 namespace ChessAnalyzerApi.UI.ChessTemplateDocument;
 
 internal class PageTemplate
 {
+    private const int BOARD_SIZE = 400;
+    private readonly string _linkPattern;
     private readonly HtmlDocument doc = new();
     private readonly int _numPage;
 
-    private PageTemplate(List<ICbDiagramHtml> cbDiagrams, int numPage)
+    private PageTemplate(List<ICbDiagramHtml> cbDiagrams, int numPage, string linkPattern)
     {
-        _numPage = numPage;
-        doc.Load(new Uri(Path.Combine(Environment.CurrentDirectory, @"../../../UI\ChessTemplateDocument\ChessbaseTemplate.html")).AbsolutePath);
+        _linkPattern = linkPattern;
+        _numPage = numPage < 1 ? 1 : numPage; // если меньше чем первая страница, то принудительно ставлю первую
+        doc.Load(new Uri(Path.Combine(Environment.CurrentDirectory, @"../../../HTML\ChessTemplateDocument\ChessbaseTemplate.html")).AbsolutePath);
         CreateDiagramPart(cbDiagrams);
         EditLinkPart();
+    }
+
+    private PageTemplate(PagedList<Position> mistakes, int numPage, string linkPattern) : this(CreateFromPositions(mistakes), numPage, linkPattern)
+    {
     }
 
     private void AddDiagramNode(HtmlNode diagram, string pathTo = "//body")
@@ -39,12 +50,35 @@ internal class PageTemplate
         int i = _numPage;
         foreach (var link in doc.DocumentNode.ChildNodes.Where(x => x.Id.Contains("link")).OrderBy(x=>x.Id))
         {
-            link.SetAttributeValue("href", $"games/{i}"); // тут надо подумать какой адрес указать для ссылок вперед/назад
+            link.SetAttributeValue("href", $"{_linkPattern}{i}");
             i++;
         }
     }
 
-    public static PageTemplate Create(List<ICbDiagramHtml> cbDiagrams, int numPage) => new(cbDiagrams, numPage);
+    private static List<ICbDiagramHtml> CreateFromPositions(PagedList<Position> mistakes)
+    {
+        List<ICbDiagramHtml> Diagrams = new();
+
+        foreach (var (pos, index) in mistakes.WithIndex())
+        {
+            CbDiagram cbDiagram = new()
+            {
+                Fen = pos.Fen,
+                Size = BOARD_SIZE.ToString(),
+                Id = index.ToString(),
+                Legend = "",
+                Solution = pos.PositionEvaluation.OneMove,
+                Title = ""
+            };
+            Diagrams.Add(CbDiagramHtml.Create(cbDiagram));
+        }
+
+        return Diagrams;
+    }
+
+    public static PageTemplate Create(List<ICbDiagramHtml> cbDiagrams, int numPage, string linkPattern) => new(cbDiagrams, numPage, linkPattern);
+
+    public static PageTemplate Create(PagedList<Position> mistakes, int numPage, string linkPattern) => new(mistakes, numPage, linkPattern);
 
     public string GetHtml() => doc.DocumentNode.InnerHtml;
 }

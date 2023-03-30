@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Extensions;
 

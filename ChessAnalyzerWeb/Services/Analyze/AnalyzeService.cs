@@ -4,23 +4,24 @@ using Domain.GameAggregate;
 using Microsoft.AspNetCore.SignalR;
 using Position = Domain.GameAggregate.Position;
 
-namespace ChessAnalyzerApi.Services;
+namespace ChessAnalyzerApi.Services.Analyze;
 
 public class AnalyzerService : IAnalyzeService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
 
     private bool isRunning = false;
-    private readonly List<IPositionEvaluation> _evaluationService = new();
-    
-    public AnalyzerService(IHubContext<NotificationHub> hubContext) //ILogger<AnalyzerService> logger
+    private readonly IEnumerable<IPositionEvaluation> _EvaluationServices;
+
+    public AnalyzerService(IEnumerable<IPositionEvaluation> EvaluationServices, IHubContext<NotificationHub> hubContext) //ILogger<AnalyzerService> logger
     {
+        _EvaluationServices = EvaluationServices ?? Enumerable.Empty<IPositionEvaluation>();
         _hubContext = hubContext;
     }
 
     private async Task AnalyzePosition(Position position)
     {
-        foreach (var evaluationService in _evaluationService)
+        foreach (var evaluationService in _EvaluationServices)
         {
             if (!position.IsEvaluated()) // оценка не найдена?
             {
@@ -31,9 +32,7 @@ public class AnalyzerService : IAnalyzeService
 
     public bool IsRunning() => isRunning;
 
-    public bool HaveAnyEvaluationServises() => _evaluationService.Any();
-
-    public void AddAnalyzeService(IPositionEvaluation analysisService) => _evaluationService.Add(analysisService);
+    public bool HaveAnyEvaluationServises() => _EvaluationServices.Any();
 
     public async Task RunAnalyzePlayerGames(Player player, double mistakePrecision, CancellationToken token = default)
     {
@@ -57,9 +56,9 @@ public class AnalyzerService : IAnalyzeService
                         }
 
                         await _hubContext.Clients.All.SendAsync(method: "Notification", // вебсокет
-                            $"Игра номер {n + 1}. Анализирую ход {Math.Ceiling((double)i / 2)}", 
+                            $"Игра номер {n + 1}. Анализирую ход {Math.Ceiling((double)i / 2)}",
                             cancellationToken: token); // вебсокет
-                                                       
+
                         await AnalyzePosition(position);
                         if (PositionEvaluation.IsMistake(colorInGame, prevPosition.PositionEvaluation.Cp, position.PositionEvaluation.Cp, mistakePrecision))
                             player.AddToMistakes(prevPosition);
