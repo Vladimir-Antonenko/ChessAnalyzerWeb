@@ -30,14 +30,10 @@ public class AnalyzerService : IAnalyzeService
         }
     }
 
-    public bool IsRunning() => isRunning;
-
     public bool HaveAnyEvaluationServises() => _EvaluationServices.Any();
 
     public async Task RunAnalyzePlayerGames(Player player, double mistakePrecision, CancellationToken token = default)
     {
-        isRunning = true;
-
         if (HaveAnyEvaluationServises())
         {
             foreach (var (game, n) in player.Games.WithIndex())
@@ -55,7 +51,7 @@ public class AnalyzerService : IAnalyzeService
                             token.ThrowIfCancellationRequested(); // генерируем исключение  
                         }
 
-                        await _hubContext.Clients.All.SendAsync(method: "Notification", // вебсокет
+                        await _hubContext.Clients.All.SendAsync(method: "Notification", 
                             $"Игра номер {n + 1}. Анализирую ход {Math.Ceiling((double)i / 2)}",
                             cancellationToken: token); // вебсокет
 
@@ -72,7 +68,5 @@ public class AnalyzerService : IAnalyzeService
                 }
             }
         }
-
-        isRunning = false;
     }
 }

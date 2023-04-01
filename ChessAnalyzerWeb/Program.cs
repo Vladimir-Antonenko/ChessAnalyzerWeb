@@ -16,7 +16,8 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
     builder.Services.AddDbContext<BaseContext>(options =>
-     options.UseSqlite("Data Source=BaseAnalyzeGames.db")); // доработать чтобы вынести строку подключения в файл
+     options.UseSqlite("Data Source=BaseAnalyzeGames.db") // доработать чтобы вынести строку подключения в файл
+     .EnableSensitiveDataLogging()); 
 
    // options.UseSqlite("ConnectionStrings:DefaultConnection"));
     //  UseSqlite($"Data Source=BaseAnalyzeGames.db"
@@ -31,10 +32,12 @@ try
     builder.Services.AddScoped<ILichess, LichessService>();
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();
 
-    builder.Services.AddHttpClient<ILichess, LichessService>(cfg =>
-    {
-        cfg.BaseAddress = new Uri("https://lichess.org/api/");
-    });
+    // IPositionEvaluation
+    builder.Services.AddHttpClient();
+    //builder.Services.AddHttpClient<ILichess, LichessService>(cfg =>
+    //{
+    //    cfg.BaseAddress = new Uri("https://lichess.org/api/");
+    //});
 
     builder.Services.AddAutoMapper(config =>
             {
@@ -53,6 +56,7 @@ try
 
     app.UseDefaultFiles();
     app.UseStaticFiles();
+    app.UseCors(cfg => cfg.AllowAnyOrigin()); // пока так для тестирования
 
     app.UseHttpsRedirection();
 

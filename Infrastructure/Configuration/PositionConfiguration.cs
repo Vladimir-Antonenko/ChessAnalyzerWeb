@@ -11,7 +11,10 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
     {
         builder.ToTable("Positions");
 
-        builder.HasKey(x => x.Fen);
+        builder.HasKey(x => x.Id);
+        builder.Property(p => p.Id).ValueGeneratedOnAdd();
+
+        //  builder.HasKey(x => x.Fen);
         builder.Property(x => x.Fen)
             .HasComment("Позиция в стандарте FEN");
 
@@ -21,9 +24,6 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
         builder.Property(x => x.WhoseMove)
             .HasConversion(new EnumToNumberConverter<Color, byte>())
             .HasComment("Чей ход в позиции");
-
-        //builder.HasOne(x => x.PositionEvaluation) // проверить что не отвалился mapper!! после добавления навигационного поля
-        //    .WithOne(x => x.Position);
 
         builder.Property(x => x.GameId)
             .IsRequired(false)

@@ -30,16 +30,21 @@ namespace ChessAnalyzerApi.Controllers
         public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName) //    // логин nightQueen111
         {
             var player = await _playerRepository.FindByName(userName);
-            player ??= Player.Create(userName);
+            if (player is null)
+            {
+                player = Player.Create(userName);
+                _playerRepository.Add(player);
+            }
             //AddProgressHandlerEvents(LichessService.processMsgHander); // скорее всего 
             await player.GetAllGamesFromPgn(_lichess);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
+
             await _playerRepository.Save();
             return Ok(player.HaveAnyGames());
         }
 
         // тщательно пересмотреть внутренность контроллера!!!
-        [Route("{userName}/AnalyzeGames")]
+        [Route("AnalyzeGames/userName={userName}&precision={precision}")]
         [HttpGet]
         public async Task<ActionResult<bool>> AnalyzeGames([FromRoute] string userName, [FromRoute] double precision)
         {
@@ -48,17 +53,10 @@ namespace ChessAnalyzerApi.Controllers
             if (player is null)
                 return NotFound(new { message = "Логин не найден" });
 
-            if (!_analyzeService.IsRunning())
-            {
-                await _analyzeService.RunAnalyzePlayerGames(player, precision);
-                _playerRepository.Update(player);
-                await _playerRepository.Save();
-                return Ok(true);
-            }
-            else
-            {
-                return Ok(false); // операция ещё выполняется
-            }
+            await _analyzeService.RunAnalyzePlayerGames(player, precision);
+
+            await _playerRepository.Save();
+            return Ok();
             // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
         }
 

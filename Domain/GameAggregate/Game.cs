@@ -12,6 +12,8 @@ public class Game
     private readonly List<Position> positions = new();
     public IReadOnlyCollection<Position> Positions => positions; // разные позиции в игре
 
+    private Game() { }
+
     private Game(string pgn)
     {
         Pgn = pgn;

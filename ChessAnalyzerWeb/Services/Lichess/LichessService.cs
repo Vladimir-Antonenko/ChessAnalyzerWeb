@@ -14,6 +14,7 @@ public class LichessService : ILichess
     {
         _mapper = mapper;
         _httpClient = httpClient;
+        _httpClient.BaseAddress = new Uri("https://lichess.org/api/");
     }
     //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token"); // тоже у клиента задать токен сразу
     ////// про токен надо подумать

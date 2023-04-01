@@ -4,6 +4,7 @@ namespace Domain.GameAggregate;
 
 public class Position
 {
+    public int Id { get; private set; }
     public string Fen { get; private set; } // позиция
     public string YourMove { get; private set; } = ""; // сделанный ход
     public Color WhoseMove { get; private set; } // чей ход

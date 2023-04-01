@@ -32,7 +32,7 @@ public class Player
 
     public bool TryAddGame(Game game)
     {
-        if (!IsContainedThisGame(game))
+        if (!IsContainedThisGame(game) && game.HaveAnyPositions())
         {
             games.Add(game);
             return true;

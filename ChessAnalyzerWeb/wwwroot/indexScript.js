@@ -43,7 +43,7 @@ async function RunAnalyze() { // добавить сюда precision !!!!!!!!!
     const name = document.getElementById("userName").value;
     const precision = document.getElementById("precision").value;
 
-    const response = await fetch("/api/RunAnalyze/${name}", {
+    const response = await fetch("/api/AnalyzeGames/userName=${name}&precision=${precision}", {
         method: "GET",
         headers: { "Accept": "text/html" }
     });
@@ -52,7 +52,7 @@ async function RunAnalyze() { // добавить сюда precision !!!!!!!!!
     if (response.ok === true)
     {
         alert("Партии проанализированы");
-        window.location.replace("адрес где генерируется страница!") // тут же указать логин и номер страницы
+        window.location.replace("/api/${name}/Lichess/Mistakes/1") // тут же указать логин и номер страницы
     }        
 }
 
