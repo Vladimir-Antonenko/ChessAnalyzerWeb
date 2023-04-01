@@ -4,6 +4,7 @@ using ChessAnalyzerApi.Extensions;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.UI.ChessTemplateDocument;
+using Infrastructure.Repositories;
 
 namespace ChessAnalyzerApi.Controllers
 {
@@ -55,7 +56,17 @@ namespace ChessAnalyzerApi.Controllers
 
             await _analyzeService.RunAnalyzePlayerGames(player, precision);
 
-            await _playerRepository.Save();
+            //тест
+            //foreach(var playerGame in player.Games) 
+            //{
+            //    foreach(var pos in playerGame.Positions)
+            //    {
+            //        pos.SetUserEvaluation(Random.Shared.NextDouble(), "qew");
+            //    }
+            //}
+            //тест
+
+            await _playerRepository.Save(); // если оценки позиции не будет выдаст исключение! если фен null например
             return Ok();
             // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
         }

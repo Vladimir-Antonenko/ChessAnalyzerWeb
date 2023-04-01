@@ -8,13 +8,14 @@ public class Player
     private readonly List<Game> games = new();
     public IReadOnlyCollection<Game> Games => games;
 
-    private readonly List<Position> mistakes = new();
-    public IReadOnlyCollection<Position> Mistakes => mistakes;
+    //private readonly List<Position> mistakes = new();
+    //public IReadOnlyCollection<Position> Mistakes => mistakes;
+    // для ef core
+    private Player() { } // для ef core
 
-
-    private Player(string name)
+    private Player(string userName)
     {
-        Name = name;
+        Name = userName;
     }
 
     public bool IsContainedThisGame(Game game) => games.Any(x => x.Pgn.Equals(game.Pgn));
@@ -46,7 +47,7 @@ public class Player
         if (!position.IsEvaluated())
             throw new InvalidDataException("Позиция без оценки не может считаться ошибкой");
         else
-            mistakes.Add(position);      
+            position.SetPositionIsMistake(true);
     }
 
     public async Task GetAllGamesFromPgn(IPgn gameSourse) // получаем игры из pgn и заранее не знаем откуда именно они пришли

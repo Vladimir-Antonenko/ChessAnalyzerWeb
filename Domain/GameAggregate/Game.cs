@@ -12,11 +12,11 @@ public class Game
     private readonly List<Position> positions = new();
     public IReadOnlyCollection<Position> Positions => positions; // разные позиции в игре
 
-    private Game() { }
+    private Game() { } // для ef core
 
-    private Game(string pgn)
+    private Game(string gamePgn)
     {
-        Pgn = pgn;
+        Pgn = gamePgn;
         ExtractPositionsFromPgn();
     }
 

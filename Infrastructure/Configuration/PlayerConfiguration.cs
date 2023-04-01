@@ -17,6 +17,6 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
 
         builder.HasMany(x => x.Games);
 
-        builder.HasMany(x => x.Mistakes);
+       // builder.HasMany(x => x.Mistakes);
     }
 }

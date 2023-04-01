@@ -10,7 +10,9 @@ public class PositionEvaluationConfiguration : IEntityTypeConfiguration<Position
     {
         builder.ToTable("PositionEvaluations");
 
-        builder.HasKey(x => x.Fen);
+        builder.HasKey(x => x.Id);
+        builder.Property(p => p.Id).ValueGeneratedOnAdd();
+        // builder.HasKey(x => x.Fen);
         builder.Property(x => x.Fen)
             .HasComment("Позиция в стандарте FEN");
 

@@ -16,15 +16,16 @@ public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
         return await FindByCondition(x => x.Name == name, trackChanges: true)
                     .Include(x => x.Games)
                     .ThenInclude(x => x.Positions)
-                    .Include(x => x.Mistakes)
                     .FirstOrDefaultAsync();
     }
 
     public async Task<PagedList<Position>> GetMistakesWithPagination(string name, int pageNum, int pageSize)
     {
         return await FindByCondition(x => x.Name == name, trackChanges: false)
-                    .Include(x => x.Mistakes)
-                    .SelectMany(x => x.Mistakes)
+                    .Include(x => x.Games)
+                    .ThenInclude(x => x.Positions.Where(x => x.IsMistake))
+                    .SelectMany(x => x.Games)
+                    .SelectMany(x => x.Positions)
                     .ToPagedListAsync(pageNum, pageSize, indexFrom: 1);
     }    
 }

@@ -26,6 +26,7 @@ public class Position
             throw new InvalidDataException($"Позиция {fen}\n некорректна!");       
     }
 
+    public void SetPositionIsMistake(bool value) => IsMistake = value;
     public void SetUserEvaluation(double cp, string move = "None") => PositionEvaluation = PositionEvaluation.Create(Fen, cp, move);
 
     public async Task GetPositionEvaluation(IPositionEvaluation serviceEvaluation) // получить оценку позиции

@@ -2,6 +2,7 @@
 
 public class PositionEvaluation
 {
+    public int Id { get; private set; }
     public int Depth { get; private set; }
     public double Cp { get; private set; }
     public string OneMove { get; private set; } = "";

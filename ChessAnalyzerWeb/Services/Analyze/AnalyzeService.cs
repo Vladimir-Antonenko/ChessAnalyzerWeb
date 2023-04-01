@@ -9,8 +9,6 @@ namespace ChessAnalyzerApi.Services.Analyze;
 public class AnalyzerService : IAnalyzeService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
-
-    private bool isRunning = false;
     private readonly IEnumerable<IPositionEvaluation> _EvaluationServices;
 
     public AnalyzerService(IEnumerable<IPositionEvaluation> EvaluationServices, IHubContext<NotificationHub> hubContext) //ILogger<AnalyzerService> logger
