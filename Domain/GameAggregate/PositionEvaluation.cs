@@ -1,4 +1,6 @@
-﻿namespace Domain.GameAggregate;
+﻿using System.Drawing;
+
+namespace Domain.GameAggregate;
 
 public class PositionEvaluation
 {
@@ -19,6 +21,13 @@ public class PositionEvaluation
     }
 
     public bool IsEmpty() => OneMove == string.Empty;
+
+    public void ChangeEvaluation(double cp, int depth, string oneMove)
+    {
+        this.Cp = cp;
+        this.Depth = depth;
+        this.OneMove = oneMove;
+    }
 
     public static bool IsMistake(Color colorInGame, double prevCp, double curCp, double mistakePrecision)
     {

@@ -50,7 +50,7 @@ public class AnalyzerService : IAnalyzeService
                 {
                     var colorInGame = player.GetPlayerColorInGame(game); // цвет player в этой игре
                     Position prevPosition = game.Positions.First();
-                    prevPosition.SetUserEvaluation(0.0d); // у первой оценка 0
+                    prevPosition.SetEvaluation(0.0d); // у первой оценка 0
 
                     foreach (var (position, i) in game.Positions.Skip(1).WithIndex()) // для всех позиций начиная со второй (пропуская первую) получаю оценку
                     {
@@ -70,7 +70,7 @@ public class AnalyzerService : IAnalyzeService
                         else
                         {
                             _logger.LogError("Ошибка получения оценки для позиции: \"{position.Id}\"", position.Id);
-                            break;
+                             break;
                         }
 
                         prevPosition = position; // текущую делаю предыдущей

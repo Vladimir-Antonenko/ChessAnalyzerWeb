@@ -36,17 +36,31 @@ public class Position
             IsMistake = value;
     }
 
-    public void SetUserEvaluation(double cp, string move = "None") => PositionEvaluation = PositionEvaluation.Create(Fen, cp, move);
+    public void SetEvaluation(double cp, int depth = 0, string move = "None")
+    {
+        if (!IsEvaluated())
+            PositionEvaluation = PositionEvaluation.Create(Fen, cp, move);
+        else
+            PositionEvaluation!.ChangeEvaluation(cp, depth, move);
+    }
+
+    public void SetEvaluation(PositionEvaluation posEval)
+    {
+        if (!IsEvaluated())
+            PositionEvaluation = posEval;
+        else
+            PositionEvaluation!.ChangeEvaluation(posEval!.Cp, posEval!.Depth, posEval!.OneMove);
+    }
 
     public async Task GetPositionEvaluation(IPositionEvaluation serviceEvaluation) // получить оценку позиции
     {
-        PositionEvaluation = await serviceEvaluation.GetPositionEvaluationAsync(Fen);
+        var positionEvaluation = await serviceEvaluation.GetPositionEvaluationAsync(Fen);
+        SetEvaluation(positionEvaluation);
     }
 
     public string GetSvgBase64(IFenSvgGenerator generator) => generator.GetSvgInBase64();
 
     public static bool IsCorrectFen(string fen) => ChessHelper.CheckValid(fen);
     public bool IsEvaluated() => !PositionEvaluation?.IsEmpty() ?? false; // позиция оценена?
-
     public static Position Create(string fen, Color whoseMove, string yourMove = "") => new(fen, whoseMove, yourMove);
 }

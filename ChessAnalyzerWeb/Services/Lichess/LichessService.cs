@@ -86,4 +86,25 @@ public class LichessService : ILichess
     /// <returns></returns>
     public async Task<Pgn> GetPgnGamesAsync(string login, DateTime since = default, DateTime until = default)
         => await GetLichessGamesAsync(login, since, until);
+
+    // попытка создать вшенший движок личесс
+    //public async Task CreateEngineAsync()
+    //{
+    //    EngineCreate engineCreate = new EngineCreate()
+    //    {
+    //        name = "Stockfish 15",
+    //        maxThreads = 4,
+    //        maxHash = 2048,
+    //        defaultDepth = 20,
+    //        variants = new List<string>() { "chess" },
+    //        providerSecret = "XXX",
+    //        providerData = "strings"
+    //    }; ;
+
+    //    var response = await _httpClient.PostAsJsonAsync($"external-engine", engineCreate);
+    //    if (response.IsSuccessStatusCode)
+    //    {
+    //        var instance = await response.Content.ReadFromJsonAsync<dynamic>();
+    //    }
+    //}
 }

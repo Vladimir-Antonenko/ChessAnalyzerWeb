@@ -56,17 +56,7 @@ namespace ChessAnalyzerApi.Controllers
 
             await _analyzeService.RunAnalyzePlayerGames(player, precision);
 
-            //тест
-            //foreach(var playerGame in player.Games) 
-            //{
-            //    foreach(var pos in playerGame.Positions)
-            //    {
-            //        pos.SetUserEvaluation(Random.Shared.NextDouble(), "qew");
-            //    }
-            //}
-            //тест
-
-            await _playerRepository.Save(); // если оценки позиции не будет выдаст исключение! если фен null например
+            await _playerRepository.Save(); // пока прикручен хард стокфиш мы гарантируем наличие оценки в любом случае. Если оценки позиции не будет - может выдать исключение! Если например от личесса фен придет null например
             return Ok();
             // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
         }
