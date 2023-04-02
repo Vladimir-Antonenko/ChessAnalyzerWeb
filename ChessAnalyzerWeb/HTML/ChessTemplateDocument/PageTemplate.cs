@@ -1,10 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using HtmlAgilityPack;
-using System.Linq;
+﻿using HtmlAgilityPack;
 using Domain.GameAggregate;
-using System.Numerics;
 using ChessAnalyzerApi.Extensions;
 using Domain.Extensions;
 
@@ -66,9 +61,9 @@ internal class PageTemplate
                 Fen = pos.Fen,
                 Size = BOARD_SIZE.ToString(),
                 Id = index.ToString(),
-                Legend = "",
-                Solution = pos.PositionEvaluation.OneMove,
-                Title = ""
+                Legend = string.Empty,
+                Solution = pos.PositionEvaluation?.OneMove ?? string.Empty,
+                Title = string.Empty
             };
             Diagrams.Add(CbDiagramHtml.Create(cbDiagram));
         }

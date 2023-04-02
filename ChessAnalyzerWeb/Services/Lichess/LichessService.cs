@@ -10,24 +10,14 @@ public class LichessService : ILichess
     private readonly IMapper _mapper;
     private readonly HttpClient _httpClient;
 
-    public LichessService(IMapper mapper, HttpClient httpClient) // ILogger<LichessService> logger
+    public LichessService(IMapper mapper, IHttpClientFactory httpClientFactory) // ILogger<LichessService> logger
     {
         _mapper = mapper;
-        _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri("https://lichess.org/api/");
+        _httpClient = httpClientFactory.CreateClient("LichessAPI");
     }
-    //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token"); // тоже у клиента задать токен сразу
-    ////// про токен надо подумать
+
     //////https://lichess.org/api#tag/Opening-Explorer/operation/openingExplorerMasterGame // БД с играми
     ////// http://tablebase.lichess.ovh/standard?fen=4k3/6KP/8/8/8/8/7p/8_w_-_-_0_1 // прям конечная точка
-    ////// deserialize
-    //////public async Task<UserModel> GetUserAsync(int userId)
-    //////{
-    //////    var result = await _httpClient.GetAsync($"api/users/{userId}");
-    //////    result.EnsureSuccessStatusCode();
-    //////    var response = await result.Content.ReadAsStringAsync();
-    //////    return DeserializeResult<UserModel>(response);
-    //////}
 
     /// <summary>
     /// Строка для получения игр пользователя (без baseAdress)
@@ -36,7 +26,7 @@ public class LichessService : ILichess
     /// <param name="since"></param>
     /// <param name="until"></param>
     /// <returns></returns>
-    private string GamesString(string login, DateTime since = default, DateTime until = default)
+    private static string GamesString(string login, DateTime since = default, DateTime until = default)
     {
         string gameString = @$"games/user/{login}?";
         gameString += since != default ? $"{nameof(since)}={since.ToUnixTimestamp()}" : string.Empty;

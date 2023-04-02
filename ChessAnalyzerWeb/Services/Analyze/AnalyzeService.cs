@@ -10,11 +10,13 @@ public class AnalyzerService : IAnalyzeService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
     private readonly IEnumerable<IPositionEvaluation> _EvaluationServices;
+    private readonly ILogger<AnalyzerService> _logger;
 
-    public AnalyzerService(IEnumerable<IPositionEvaluation> EvaluationServices, IHubContext<NotificationHub> hubContext) //ILogger<AnalyzerService> logger
+    public AnalyzerService(IEnumerable<IPositionEvaluation> EvaluationServices, IHubContext<NotificationHub> hubContext, ILogger<AnalyzerService> logger)
     {
         _EvaluationServices = EvaluationServices ?? Enumerable.Empty<IPositionEvaluation>();
         _hubContext = hubContext;
+        _logger = logger;
     }
 
     private async Task AnalyzePosition(Position position)
@@ -26,6 +28,14 @@ public class AnalyzerService : IAnalyzeService
                 await position.GetPositionEvaluation(evaluationService);
             }
         }
+    }
+
+    private async Task SendProcessNotification(int nGame, int move, CancellationToken token)
+    {
+        await _hubContext.Clients.All // вебсокет
+            .SendAsync(method: "Notification",
+                       $"Игра номер {nGame + 1}. Анализирую ход {Math.Ceiling((double)move / 2)}",
+                        cancellationToken: token);
     }
 
     public bool HaveAnyEvaluationServises() => _EvaluationServices.Any();
@@ -49,13 +59,19 @@ public class AnalyzerService : IAnalyzeService
                             token.ThrowIfCancellationRequested(); // генерируем исключение  
                         }
 
-                        await _hubContext.Clients.All.SendAsync(method: "Notification", 
-                            $"Игра номер {n + 1}. Анализирую ход {Math.Ceiling((double)i / 2)}",
-                            cancellationToken: token); // вебсокет
-
+                        await SendProcessNotification(nGame: n, move: i, token);
                         await AnalyzePosition(position);
-                        if (PositionEvaluation.IsMistake(colorInGame, prevPosition.PositionEvaluation.Cp, position.PositionEvaluation.Cp, mistakePrecision))
-                            player.AddToMistakes(prevPosition);
+
+                        if (position.IsEvaluated())
+                        {
+                            if (PositionEvaluation.IsMistake(colorInGame, prevPosition.PositionEvaluation!.Cp, position.PositionEvaluation!.Cp, mistakePrecision))
+                                prevPosition.SetPositionIsMistake(true);
+                        }
+                        else
+                        {
+                            _logger.LogError("Ошибка получения оценки для позиции: \"{position.Id}\"", position.Id);
+                            break;
+                        }
 
                         prevPosition = position; // текущую делаю предыдущей
                     }
