@@ -16,7 +16,7 @@ internal class PageTemplate
     {
         _linkPattern = linkPattern;
         _numPage = numPage < 1 ? 1 : numPage; // если меньше чем первая страница, то принудительно ставлю первую
-        doc.Load(new Uri(Path.Combine(Environment.CurrentDirectory, @"../../../HTML\ChessTemplateDocument\ChessbaseTemplate.html")).AbsolutePath);
+        doc.Load(Path.Combine(Environment.CurrentDirectory, @"HTML\ChessTemplateDocument\ChessbaseTemplate.html"));
         CreateDiagramPart(cbDiagrams);
         EditLinkPart();
     }

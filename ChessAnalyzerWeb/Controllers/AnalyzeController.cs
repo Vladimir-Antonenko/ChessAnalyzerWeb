@@ -4,7 +4,6 @@ using ChessAnalyzerApi.Extensions;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.UI.ChessTemplateDocument;
-using Infrastructure.Repositories;
 
 namespace ChessAnalyzerApi.Controllers
 {
@@ -18,7 +17,7 @@ namespace ChessAnalyzerApi.Controllers
         private readonly ILichess _lichess;
         private readonly ILogger<AnalyzeController> _logger;
 
-        public AnalyzeController(ILichess lichess, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger) //IPlayerRepository playerRepository, 
+        public AnalyzeController(ILichess lichess, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
         {
             _playerRepository = playerRepository;
             _analyzeService = analyzeService;
@@ -28,7 +27,7 @@ namespace ChessAnalyzerApi.Controllers
 
         [Route("{userName}/FindPlayerGames")]
         [HttpPost]
-        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName) //    // логин nightQueen111
+        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName) // логин nightQueen111
         {
             var player = await _playerRepository.FindByName(userName);
             if (player is null)
@@ -61,7 +60,7 @@ namespace ChessAnalyzerApi.Controllers
             // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
         }
 
-        [Route("{userName:max(50)}/Lichess/Mistakes/{numPage:int:min(1)}")]
+        [Route("{userName}/Lichess/Mistakes/{numPage:int:min(1)}")]
         [HttpGet]
         public async Task<ContentResult> GetPagePlayerMistakes([FromRoute] string userName, [FromRoute] int numPage)
         {

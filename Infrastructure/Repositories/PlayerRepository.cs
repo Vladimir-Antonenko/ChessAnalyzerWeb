@@ -23,9 +23,9 @@ public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
     {
         return await FindByCondition(x => x.Name == name, trackChanges: false)
                     .Include(x => x.Games)
-                    .ThenInclude(x => x.Positions.Where(x => x.IsMistake))
+                    .ThenInclude(x => x.Positions)
                     .SelectMany(x => x.Games)
-                    .SelectMany(x => x.Positions)
+                    .SelectMany(x => x.Positions.Where(x => x.IsMistake)) // фильтрую в SelectMany (в ThenInclude нельзя)
                     .ToPagedListAsync(pageNum, pageSize, indexFrom: 1);
-    }    
+    }   
 }
