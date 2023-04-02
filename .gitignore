@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ChessAnalyzerWeb/BaseAnalyzeGames.db-shm
+/ChessAnalyzerWeb/BaseAnalyzeGames.db-wal
