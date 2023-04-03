@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ChessAnalyzerApi.Extensions;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
+using Microsoft.AspNetCore.Http.Extensions;
 using ChessAnalyzerApi.UI.ChessTemplateDocument;
 
 namespace ChessAnalyzerApi.Controllers
@@ -69,7 +70,8 @@ namespace ChessAnalyzerApi.Controllers
             string html = string.Empty;
             if (partMistakes.Anybody())
             {
-                html = PageTemplate.Create(partMistakes, numPage, linkPattern: $"{userName}/Lichess/Mistakes/").GetHtml();
+                var mistakesUrl = HttpContext.Request.GetDisplayUrl();
+                html = PageTemplate.Create(partMistakes, numPage, requestUrl: mistakesUrl).GetHtml();
             }
 
             return Content(html, "text/html");

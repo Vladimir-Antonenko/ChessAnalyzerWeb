@@ -8,13 +8,13 @@ namespace ChessAnalyzerApi.UI.ChessTemplateDocument;
 internal class PageTemplate
 {
     private const int BOARD_SIZE = 400;
-    private readonly string _linkPattern;
+    private readonly string _link;
     private readonly HtmlDocument doc = new();
     private readonly int _numPage;
 
-    private PageTemplate(List<ICbDiagramHtml> cbDiagrams, int numPage, string linkPattern)
+    private PageTemplate(List<ICbDiagramHtml> cbDiagrams, int numPage, string link)
     {
-        _linkPattern = linkPattern;
+        _link = link;
         _numPage = numPage < 1 ? 1 : numPage; // если меньше чем первая страница, то принудительно ставлю первую
         doc.Load(Path.Combine(Environment.CurrentDirectory, @"HTML\ChessTemplateDocument\ChessbaseTemplate.html"));
         CreateDiagramPart(cbDiagrams);
@@ -41,12 +41,27 @@ internal class PageTemplate
     }
 
     private void EditLinkPart()
-    {
+    {        
         int i = _numPage;
-        foreach (var link in doc.DocumentNode.ChildNodes.Where(x => x.Id.Contains("link")).OrderBy(x=>x.Id))
+        var removeDigit = _link.LastIndexOf("/");
+        var link = _link.Remove(removeDigit, _link.Length - removeDigit);
+
+        var backLink = doc.GetElementbyId("link1");
+        var nextLink = doc.GetElementbyId("link2");
+
+        if(int.Parse(nextLink.GetAttributeValue("alt", "2")) == i)
         {
-            link.SetAttributeValue("href", $"{_linkPattern}{i}");
-            i++;
+            nextLink.SetAttributeValue("href", $"{link}/{i}");
+            nextLink.SetAttributeValue("alt", $"{i}");
+            backLink.SetAttributeValue("href", $"{link}/{--i}");
+            backLink.SetAttributeValue("alt", $"{i}");
+        }
+        else
+        {
+            backLink.SetAttributeValue("href", $"{link}/{i}");
+            backLink.SetAttributeValue("alt", $"{i}");
+            nextLink.SetAttributeValue("href", $"{link}/{++i}");
+            nextLink.SetAttributeValue("alt", $"{i}");
         }
     }
 
@@ -71,9 +86,9 @@ internal class PageTemplate
         return Diagrams;
     }
 
-    public static PageTemplate Create(List<ICbDiagramHtml> cbDiagrams, int numPage, string linkPattern) => new(cbDiagrams, numPage, linkPattern);
+    // public static PageTemplate Create(List<ICbDiagramHtml> cbDiagrams, int numPage, string link) => new(cbDiagrams, numPage, link);
 
-    public static PageTemplate Create(PagedList<Position> mistakes, int numPage, string linkPattern) => new(mistakes, numPage, linkPattern);
+    public static PageTemplate Create(PagedList<Position> mistakes, int numPage, string requestUrl) => new(mistakes, numPage, requestUrl);
 
     public string GetHtml() => doc.DocumentNode.InnerHtml;
 }
