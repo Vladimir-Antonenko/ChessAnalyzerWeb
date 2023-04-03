@@ -51,7 +51,7 @@ async function RunAnalyze() { // добавить сюда precision !!!!!!!!!
     // если запрос прошел нормально
     if (response.ok === true) {
         alert("Партии проанализированы");
-        window.location.replace(`/api/${name}/Lichess/Mistakes/1`) // тут же указать логин и номер страницы
+        window.location.replace(`/api/${name}/Lichess/Mistakes/1`) 
     }
 }
 
