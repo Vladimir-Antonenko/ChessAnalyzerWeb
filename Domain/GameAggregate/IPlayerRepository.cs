@@ -1,4 +1,4 @@
-﻿using Domain.Extensions;
+﻿using Domain.Common;
 
 namespace Domain.GameAggregate;
 

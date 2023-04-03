@@ -27,43 +27,15 @@ try
     builder.Services.AddScoped<ILichess, LichessService>();
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();
 
-    // IPositionEvaluation
-    builder.Services.AddHttpClient();
-    //builder.Services.AddHttpClient<ILichess, LichessService>(cfg =>
-    //{
-    //    cfg.BaseAddress = new Uri("https://lichess.org/api/");
-    //});
-
-
     builder.Services.AddHttpClient("LichessAPI",
         client =>
         {
             client.BaseAddress = new Uri(builder.Configuration["LichessApiBaseUrl"]!);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", builder.Configuration["LichessToken"]);
-            //lip_gleNJLbdji3tDh1zMvqk // токен
         });
 
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                                        .CreateClient("LichessAPI"));
-
-    // пример для oauth2
-    //options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    //{
-    //    Type = SecuritySchemeType.OAuth2,
-    //    Flows = new OpenApiOAuthFlows()
-    //    {
-    //        Implicit = new OpenApiOAuthFlow()
-    //        {
-    //            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
-    //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
-
-    //            Scopes = new Dictionary<string, string>()
-    //                    {
-    //                        { "webshoppingagg", "Shopping Aggregator for Web Clients" }
-    //                    }
-    //        }
-    //    }
-    //});
 
     builder.Services.AddAutoMapper(config =>
             {

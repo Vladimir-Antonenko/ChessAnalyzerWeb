@@ -1,4 +1,4 @@
-﻿using Domain.Extensions;
+﻿using Domain.Common;
 using Domain.GameAggregate;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;

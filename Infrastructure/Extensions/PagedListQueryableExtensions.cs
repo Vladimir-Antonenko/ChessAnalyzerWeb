@@ -1,4 +1,4 @@
-﻿using Domain.Extensions;
+﻿using Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Extensions;

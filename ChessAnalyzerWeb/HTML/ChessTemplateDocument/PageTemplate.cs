@@ -1,7 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Domain.GameAggregate;
 using ChessAnalyzerApi.Extensions;
-using Domain.Extensions;
+using Domain.Common;
 
 namespace ChessAnalyzerApi.UI.ChessTemplateDocument;
 

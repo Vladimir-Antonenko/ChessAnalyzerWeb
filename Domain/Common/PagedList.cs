@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Domain.Extensions;
+namespace Domain.Common;
 
 public class PagedList<T> : IReadOnlyList<T>
 {
