@@ -1,11 +1,12 @@
 using Infrastructure;
-using ChessAnalyzerApi;
 using ChessAnalyzerApi.Hubs;
 using System.Net.Http.Headers;
+using ChessAnalyzerApi.Registrators;
 using Microsoft.EntityFrameworkCore;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.Lichess.Mapping;
+using ChessAnalyzerApi.Services.ChessDB.Mapping;
 
 try
 {
@@ -27,6 +28,7 @@ try
     builder.Services.AddScoped<ILichess, LichessService>();
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();
 
+    builder.Services.AddHttpClient("ChessDB", client => client.BaseAddress = new Uri(builder.Configuration["ChessDBApiBaseUrl"]!));
     builder.Services.AddHttpClient("LichessAPI",
         client =>
         {
@@ -34,13 +36,14 @@ try
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", builder.Configuration["LichessToken"]);
         });
 
-    builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-                                       .CreateClient("LichessAPI"));
+    builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ChessDB"));
+    builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LichessAPI"));
 
     builder.Services.AddAutoMapper(config =>
             {
                 config.AddProfile<EvaluationProfile>();
                 config.AddProfile<PgnProfile>();
+                config.AddProfile<QueryPvProfile>();
             });
 
     var app = builder.Build();

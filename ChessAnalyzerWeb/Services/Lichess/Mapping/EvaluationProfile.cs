@@ -9,6 +9,7 @@ public class EvaluationProfile : Profile
     public EvaluationProfile()
     {
         CreateMap<LichessEvaluationModel, PositionEvaluation>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.Depth, opt => opt.MapFrom(u => u.depth))
             .ForMember(dest => dest.Fen, opt => opt.MapFrom(u => u.fen))
             .ForMember(dest => dest.Cp, opt => opt.MapFrom(u => u.pvs != null
