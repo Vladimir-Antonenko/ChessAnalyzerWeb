@@ -9,6 +9,6 @@ public static class RegistratorEvaluationServices
 {
     public static IServiceCollection AddEvaluationServices(this IServiceCollection services) => services
     .AddScoped<IPositionEvaluation, LichessService>()
-    .AddScoped<IPositionEvaluation,IChessDBService>()
+    .AddScoped<IPositionEvaluation, ChessDBService>()
     .AddSingleton<IPositionEvaluation, Stockfish>();
 }

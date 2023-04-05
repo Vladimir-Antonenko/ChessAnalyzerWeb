@@ -5,6 +5,7 @@ using ChessAnalyzerApi.Registrators;
 using Microsoft.EntityFrameworkCore;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
+using ChessAnalyzerApi.Services.ChessDB;
 using ChessAnalyzerApi.Services.Lichess.Mapping;
 using ChessAnalyzerApi.Services.ChessDB.Mapping;
 
@@ -27,6 +28,7 @@ try
     builder.Services.AddEvaluationServices();
     builder.Services.AddScoped<ILichess, LichessService>();
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();
+    builder.Services.AddScoped<IChessDBService, ChessDBService>();
 
     builder.Services.AddHttpClient("ChessDB", client => client.BaseAddress = new Uri(builder.Configuration["ChessDBApiBaseUrl"]!));
     builder.Services.AddHttpClient("LichessAPI",

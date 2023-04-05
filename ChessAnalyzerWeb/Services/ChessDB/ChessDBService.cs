@@ -38,12 +38,8 @@ namespace ChessAnalyzerApi.Services.ChessDB
             {
                 instance = await response.Content.ReadFromJsonAsync<QueryPvModel>();
             }
-            // проверить когда позиции в базе нет что возвращает успешно 
-            // if the position is unknown, "unknown" is returned
 
-            // нужно как-то докинуть fen в PositionEvaluation!! у него приватный сеттер!
-            return _mapper.Map<QueryPvModel, PositionEvaluation>(instance, ("Fen", fen)); //(nameof(fen), fen)
-            // return _mapper.Map<QueryPvModel, PositionEvaluation>(instance, opt => opt.BeforeMap((src, dest) => dest.Fen = fen));
+            return _mapper.Map<QueryPvModel, PositionEvaluation>(instance, ("Fen", fen)); // дополнительно прокидываю fen в итоговую модель
         }
     }
 }
