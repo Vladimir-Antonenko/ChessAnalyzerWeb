@@ -5,18 +5,15 @@ using ChessAnalyzerApi.ExtensionsChessAnalyzerApi.Extensions;
 
 namespace ChessAnalyzerApi.Services.ChessDB
 {
+    /// <summary>
+    /// Инструкция по работе с api от ChessDB https://www.chessdb.cn/cloudbookc_api_en.html
+    /// </summary>
     public class ChessDBService : IChessDBService
     {
         private readonly IMapper _mapper;
         private readonly HttpClient _httpClient;
         private readonly ILogger<ChessDBService> _logger;
 
-        /// <summary>
-        /// Инструкция по работе с api от ChessDB https://www.chessdb.cn/cloudbookc_api_en.html
-        /// </summary>
-        /// <param name="mapper"></param>
-        /// <param name="httpClientFactory"></param>
-        /// <param name="logger"></param>
         public ChessDBService(IMapper mapper, IHttpClientFactory httpClientFactory, ILogger<ChessDBService> logger)
         {
             _mapper = mapper;
@@ -25,9 +22,9 @@ namespace ChessAnalyzerApi.Services.ChessDB
         }
 
         /// <summary>
-        /// Получение оценки с ресурса ChessDB
+        /// Получение оценки позиции с ресурса ChessDB
         /// </summary>
-        /// <param name="fen"></param>
+        /// <param name="fen">Позиция в формате fen строки</param>
         /// <returns></returns>
         public async Task<PositionEvaluation> GetPositionEvaluationAsync(string fen)
         {

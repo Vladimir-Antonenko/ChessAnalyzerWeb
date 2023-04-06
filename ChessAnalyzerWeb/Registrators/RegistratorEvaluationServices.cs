@@ -7,8 +7,14 @@ namespace ChessAnalyzerApi.Registrators;
 
 public static class RegistratorEvaluationServices
 {
-    public static IServiceCollection AddEvaluationServices(this IServiceCollection services) => services
-    .AddScoped<IPositionEvaluation, LichessService>()
-    .AddScoped<IPositionEvaluation, ChessDBService>()
-    .AddSingleton<IPositionEvaluation, Stockfish>();
+    /// <summary>
+    /// Регистрирует сервисы оценки позиции
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddEvaluationServices(this IServiceCollection services) 
+        => services
+                    .AddScoped<IPositionEvaluation, LichessService>()
+                    .AddScoped<IPositionEvaluation, ChessDBService>()
+                    .AddSingleton<IPositionEvaluation, Stockfish>();
 }

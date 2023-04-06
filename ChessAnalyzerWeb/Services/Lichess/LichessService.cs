@@ -5,6 +5,9 @@ using ChessAnalyzerApi.ExternalApi.Lichess.Models;
 
 namespace ChessAnalyzerApi.Services.Lichess;
 
+/// <summary>
+/// Сервис взаимодействующий с api сайта Lichess
+/// </summary>
 public class LichessService : ILichess
 {   
     private readonly IMapper _mapper;
@@ -22,9 +25,9 @@ public class LichessService : ILichess
     /// <summary>
     /// Строка для получения игр пользователя (без baseAdress)
     /// </summary>
-    /// <param name="login"></param>
-    /// <param name="since"></param>
-    /// <param name="until"></param>
+    /// <param name="login">Логин игрока</param>
+    /// <param name="since">С какой даты необходимо получить игры</param>
+    /// <param name="until">По какую дату нужны игры</param>
     /// <returns></returns>
     private static string GamesString(string login, DateTime since = default, DateTime until = default)
     {
@@ -38,9 +41,9 @@ public class LichessService : ILichess
     /// <summary>
     /// Получить игры пользователя зная строку фильтра параметров
     /// </summary>
-    /// <param name="login"></param>
-    /// <param name="since"></param>
-    /// <param name="until"></param>
+    /// <param name="login">Логин игрока</param>
+    /// <param name="since">С какой даты необходимо получить игры</param>
+    /// <param name="until">По какую дату нужны игры</param>
     /// <returns></returns>
     private async Task<Pgn> GetLichessGamesAsync(string login, DateTime since = default, DateTime until = default)
     {
@@ -62,7 +65,7 @@ public class LichessService : ILichess
     /// <summary>
     /// Получить оценку позиции по заданному fen
     /// </summary>
-    /// <param name="fen"></param>
+    /// <param name="fen">Позиция в формате fen строки</param>
     /// <returns></returns>
     public async Task<PositionEvaluation> GetPositionEvaluationAsync(string fen)
     {
@@ -80,9 +83,9 @@ public class LichessService : ILichess
     /// <summary>
     /// Получить все игры пользователя в диапазоне дат {since : until}
     /// </summary>
-    /// <param name="login"></param>
-    /// <param name="since"></param>
-    /// <param name="until"></param>
+    /// <param name="login">Логин игрока</param>
+    /// <param name="since">С какой даты необходимо получить игры</param>
+    /// <param name="until">По какую дату нужны игры</param>
     /// <returns></returns>
     public async Task<Pgn> GetPgnGamesAsync(string login, DateTime since = default, DateTime until = default)
         => await GetLichessGamesAsync(login, since, until);

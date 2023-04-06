@@ -2,6 +2,9 @@
 
 namespace Domain;
 
+/// <summary>
+/// Вспомогательные регулярные выражения для шахмат
+/// </summary>
 internal class Regexes
 {
     internal const string SanOneMovePattern = @"(^([PNBRQK])?([a-h])?([1-8])?(x|X|-)?([a-h][1-8])(=[NBRQ]| ?e\.p\.)?|^O-O(-O)?)(\+|\#|\$)?$";

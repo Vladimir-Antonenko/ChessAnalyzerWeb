@@ -2,6 +2,10 @@
 
 namespace Domain;
 
+/// <summary>
+/// Интерфейс базового репозитория для работы с данными
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public interface IRepositoryBase<T> where T : class
 {
     IQueryable<T> FindAll(bool trackChanges);
@@ -11,20 +15,3 @@ public interface IRepositoryBase<T> where T : class
     void Delete(T item);
     Task Save();
 }
-
-// старый репозиторий
-//using System.Linq.Expressions;
-
-//namespace Infrastructure;
-
-//internal interface IBaseRepository<T> : IDisposable where T : class
-//{
-//    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges);
-//    public IEnumerable<T> GetAll();
-//    public T? GetById(int id);
-//    public T Add(T item);
-//    public void AddRange(IEnumerable<T> items);
-//    public void Update(T item);
-//    public void Delete(T item);
-//    public Task SaveAsync();
-//}

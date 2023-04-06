@@ -6,6 +6,9 @@ using Position = Domain.GameAggregate.Position;
 
 namespace ChessAnalyzerApi.Services.Analyze;
 
+/// <summary>
+/// Сервис анализа позиций игрока
+/// </summary>
 public class AnalyzerService : IAnalyzeService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
@@ -19,6 +22,11 @@ public class AnalyzerService : IAnalyzeService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Процедура анализа позиции
+    /// </summary>
+    /// <param name="position">Анализируемая позиции</param>
+    /// <returns></returns>
     private async Task AnalyzePosition(Position position)
     {
         foreach (var evaluationService in _EvaluationServices)
@@ -30,23 +38,43 @@ public class AnalyzerService : IAnalyzeService
         }
     }
 
-    private async Task SendProcessNotification(int nGame, int move, CancellationToken token)
+    /// <summary>
+    /// Отправка клиенту уведомлений о прогрессе анализа на основе вебсокета
+    /// </summary>
+    /// <param name="playerName">Имя игрока</param>
+    /// <param name="nGame">Номер анализируемой игры</param>
+    /// <param name="nMove">Номер хода</param>
+    /// <param name="token">Отмен отмены</param>
+    /// <returns></returns>
+    private async Task SendProcessNotification(string playerName, int nGame, int nMove, CancellationToken token)
     {
-        await _hubContext.Clients.All // вебсокет
+        await _hubContext.Clients
+            .Group(playerName)
             .SendAsync(method: "Notification",
-                       $"Игра номер {nGame + 1}. Анализирую ход {Math.Ceiling((double)move / 2)}",
+                       $"Игра номер {nGame + 1}. Анализирую ход {Math.Ceiling((double)nMove / 2)}",
                         cancellationToken: token);
     }
 
+    /// <summary>
+    /// Проверка имеются ли сервисы способные оценить позицию
+    /// </summary>
+    /// <returns></returns>
     public bool HaveAnyEvaluationServises() => _EvaluationServices.Any();
 
+    /// <summary>
+    /// Запускаем анализ игр игрока
+    /// </summary>
+    /// <param name="player">Игрок</param>
+    /// <param name="mistakePrecision">Точность перепада оценки</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns></returns>
     public async Task RunAnalyzePlayerGames(Player player, double mistakePrecision, CancellationToken token = default)
     {
         if (HaveAnyEvaluationServises())
         {
             foreach (var (game, n) in player.Games.WithIndex())
             {
-                if (game.HaveAnyPositions()) // позиции есть (отпарсили игру успешно)
+                if (game.HaveAnyPositions()) // позиции есть (отпарсили данную игру успешно)
                 {
                     var colorInGame = player.GetPlayerColorInGame(game); // цвет player в этой игре
                     Position prevPosition = game.Positions.First();
@@ -58,8 +86,8 @@ public class AnalyzerService : IAnalyzeService
                         {
                             token.ThrowIfCancellationRequested(); // генерируем исключение  
                         }
-
-                        await SendProcessNotification(nGame: n, move: i, token);
+                        
+                        await SendProcessNotification(playerName: player.Name, nGame: n, nMove: i, token);
                         await AnalyzePosition(position);
 
                         if (position.IsEvaluated())
@@ -75,11 +103,6 @@ public class AnalyzerService : IAnalyzeService
 
                         prevPosition = position; // текущую делаю предыдущей
                     }
-                }
-                else
-                {
-                    // скорее всего лучше просто ввести признак у игры и помечать их
-                    // nonParsed.Add(onePGN);// те игры которые не получилось отпарсить (!!!!!!!!!!!!!!!!!!!!!!! ПЕРЕПИСАТЬ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
                 }
             }
         }

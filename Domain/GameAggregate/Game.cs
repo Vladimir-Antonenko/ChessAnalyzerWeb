@@ -12,15 +12,25 @@ public class Game
     private readonly List<Position> positions = new();
     public IReadOnlyCollection<Position> Positions => positions; // разные позиции в игре
 
-    private Game() { } // для ef core
+    /// <summary>
+    /// Для ef core
+    /// </summary>
+    private Game() { }
 
+    /// <summary>
+    /// Конструктор игры
+    /// </summary>
+    /// <param name="gamePgn">Pgn данные игры</param>
     private Game(string gamePgn)
     {
         Pgn = gamePgn;
         ExtractPositionsFromPgn();
     }
 
-    private void ExtractPositionsFromPgn() // извлекаю позиции из pgn
+    /// <summary>
+    /// Извлекает позицию на основе pgn данных
+    /// </summary>
+    private void ExtractPositionsFromPgn()
     {
         if (Chess.ChessBoard.TryLoadFromPgn(Pgn, out var game) && game?.MoveIndex > -1) // если удалось отпарсить одну pgn в gameBoard
         {
@@ -43,9 +53,22 @@ public class Game
         }
     }
 
+    /// <summary>
+    /// Добавить позицию в список позиций игры
+    /// </summary>
+    /// <param name="position">Добавляемая позиция</param>
     public void AddPosition(Position position) => positions.Add(position);
    
+    /// <summary>
+    /// В игре есть хотя какие-либо позиции
+    /// </summary>
+    /// <returns></returns>
     public bool HaveAnyPositions() => positions.Any();
 
+    /// <summary>
+    /// Фабричный метод создания игры на основе pgn данных
+    /// </summary>
+    /// <param name="pgn">Pgn данные игры</param>
+    /// <returns></returns>
     public static Game Create(string pgn) => new(pgn);
 }

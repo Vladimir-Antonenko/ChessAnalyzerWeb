@@ -38,10 +38,19 @@ async function CancelAnalyze() {
         alert("Операция анализа прервана!");
 }
 
-async function RunAnalyze() { // добавить сюда precision !!!!!!!!!
-
+async function RunAnalyze()
+{ 
     const name = document.getElementById("userName").value;
     const precision = document.getElementById("precision").value;
+
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/notifications")
+        .build();
+
+    hubConnection.invoke("JoinGroup", name);
+    hubConnection.on("Notification", message => {
+        document.getElementById("progressId").textContent = message;
+    });
 
     const response = await fetch(`/api/AnalyzeGames/userName=${name}&precision=${precision}`, {
         method: "GET",
