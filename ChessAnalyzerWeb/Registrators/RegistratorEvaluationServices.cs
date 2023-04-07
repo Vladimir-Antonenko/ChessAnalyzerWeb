@@ -17,4 +17,6 @@ public static class RegistratorEvaluationServices
                     .AddScoped<IPositionEvaluation, LichessService>()
                     .AddScoped<IPositionEvaluation, ChessDBService>()
                     .AddSingleton<IPositionEvaluation, Stockfish>();
+
+    // на очереди ещё одни возможные api описанные тут https://snyk.io/advisor/npm-package/chess-web-api
 }

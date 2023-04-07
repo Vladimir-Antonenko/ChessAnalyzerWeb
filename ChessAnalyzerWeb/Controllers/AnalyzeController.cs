@@ -17,18 +17,26 @@ namespace ChessAnalyzerApi.Controllers
         private readonly IAnalyzeService _analyzeService;
         private readonly ILichess _lichess;
         private readonly ILogger<AnalyzeController> _logger;
+        private readonly CancellationTokenSource _ctSource;
 
+        // логин для проверки nightQueen111
         public AnalyzeController(ILichess lichess, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
         {
             _playerRepository = playerRepository;
             _analyzeService = analyzeService;
             _lichess = lichess;
             _logger = logger;
+            _ctSource = new();
         }
 
+        /// <summary>
+        /// Поиск всех игр игрока
+        /// </summary>
+        /// <param name="userName">Логин на lichess</param>
+        /// <returns></returns>
         [Route("{userName}/FindPlayerGames")]
         [HttpPost]
-        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName) // логин nightQueen111
+        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName)
         {
             var player = await _playerRepository.FindByName(userName);
             if (player is null)
@@ -36,7 +44,7 @@ namespace ChessAnalyzerApi.Controllers
                 player = Player.Create(userName);
                 _playerRepository.Add(player);
             }
-            //AddProgressHandlerEvents(LichessService.processMsgHander); // скорее всего 
+            //AddProgressHandlerEvents(LichessService.processMsgHander); // было раньше (пока ещё не прикрутил прогресс загрузки)
             await player.GetAllGamesFromPgn(_lichess);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
 
@@ -44,7 +52,12 @@ namespace ChessAnalyzerApi.Controllers
             return Ok(player.HaveAnyGames());
         }
 
-        // тщательно пересмотреть внутренность контроллера!!!
+        /// <summary>
+        /// Запускает анализ игр игрока
+        /// </summary>
+        /// <param name="userName">Логин игрока, партии которого будут анализироваться</param>
+        /// <param name="precision">Точность перепада оценки для признания хода в позиции ошибочным</param>
+        /// <returns></returns>
         [Route("AnalyzeGames/userName={userName}&precision={precision}")]
         [HttpGet]
         public async Task<ActionResult<bool>> AnalyzeGames([FromRoute] string userName, [FromRoute] double precision)
@@ -54,13 +67,19 @@ namespace ChessAnalyzerApi.Controllers
             if (player is null)
                 return NotFound(new { message = "Логин не найден" });
 
-            await _analyzeService.RunAnalyzePlayerGames(player, precision);
+            await _analyzeService.RunAnalyzePlayerGames(player, precision, token: _ctSource.Token);
 
-            await _playerRepository.Save(); // пока прикручен хард стокфиш мы гарантируем наличие оценки в любом случае. Если оценки позиции не будет - может выдать исключение! Если например от личесса фен придет null например
+            await _playerRepository.Save(); // Пока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). Если оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
             return Ok();
             // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
         }
 
+        /// <summary>
+        /// Отправляет клиенту формируемую html страницу с диаграммами его ошибок
+        /// </summary>
+        /// <param name="userName">Логин на lichess</param>
+        /// <param name="numPage">Номер страницы ошибок</param>
+        /// <returns></returns>
         [Route("{userName}/Lichess/Mistakes/{numPage:int:min(1)}")]
         [HttpGet]
         public async Task<ContentResult> GetPagePlayerMistakes([FromRoute] string userName, [FromRoute] int numPage)
@@ -79,5 +98,17 @@ namespace ChessAnalyzerApi.Controllers
             // return Redirect("/Home/Index");
         }
 
+        /// <summary>
+        /// Отмена анализа партии
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        [Route("CancelAnalyze/userName={userName}")]
+        [HttpGet]
+        public async Task<ActionResult<bool>> CancelAnalyze([FromRoute] string userName)
+        {
+            await Task.Run(() => _ctSource.Cancel(true));
+            return Ok(true);
+        }
     }
 }

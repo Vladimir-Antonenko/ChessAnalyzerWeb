@@ -1,4 +1,4 @@
-﻿        // Добавление пользователя
+﻿// Добавление пользователя
 async function createUser(userName) {
 
     const response = await fetch(`/api/${userName}/FindPlayerGames`, {
@@ -20,7 +20,7 @@ async function createUser(userName) {
     }
 }
 
-    // сброс данных формы после отправки
+// сброс данных формы после отправки
 function reset() {
     document.getElementById("userId").value =
         document.getElementById("userName").value = "";
@@ -28,7 +28,7 @@ function reset() {
 
 async function CancelAnalyze() {
 
-    const response = await fetch("/api/CancelAnalyze", {
+    const response = await fetch(`/api/CancelAnalyze/userName=${name}`, {
         method: "GET",
         headers: { "Accept": "application/json" }
 
@@ -39,7 +39,7 @@ async function CancelAnalyze() {
 }
 
 async function RunAnalyze()
-{ 
+{
     const name = document.getElementById("userName").value;
     const precision = document.getElementById("precision").value;
 
@@ -47,8 +47,16 @@ async function RunAnalyze()
         .withUrl("/notifications")
         .build();
 
-    hubConnection.invoke("JoinGroup", name);
-    hubConnection.on("Notification", message => {
+    hubConnection.start().then(() => {
+
+        console.log('Connection started!');
+        hubConnection.invoke("JoinGroup", name).catch(function (err) {
+            return console.error(err.toString());
+        });
+    })
+        .catch(err => console.log('Error while establishing connection :('));
+
+    hubConnection.on("Notification", function (message) {
         document.getElementById("progressId").textContent = message;
     });
 
@@ -60,7 +68,7 @@ async function RunAnalyze()
     // если запрос прошел нормально
     if (response.ok === true) {
         alert("Партии проанализированы");
-        window.location.replace(`/api/${name}/Lichess/Mistakes/1`) 
+        window.location.replace(`/api/${name}/Lichess/Mistakes/1`)
     }
 }
 

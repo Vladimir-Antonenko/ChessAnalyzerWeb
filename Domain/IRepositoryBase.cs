@@ -11,7 +11,7 @@ public interface IRepositoryBase<T> where T : class
     IQueryable<T> FindAll(bool trackChanges);
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges);
     T Add(T item);
-    void Update(T item);
+   // void Update(T item);
     void Delete(T item);
     Task Save();
 }
