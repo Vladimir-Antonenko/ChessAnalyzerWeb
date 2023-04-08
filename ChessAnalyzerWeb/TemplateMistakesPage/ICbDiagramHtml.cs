@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 
-namespace ChessAnalyzerApi.UI.ChessTemplateDocument;
+namespace ChessAnalyzerApi.TemplateMistakesPage;
 
 public interface ICbDiagramHtml
 {

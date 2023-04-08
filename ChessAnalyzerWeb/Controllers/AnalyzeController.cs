@@ -4,7 +4,7 @@ using ChessAnalyzerApi.Extensions;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using Microsoft.AspNetCore.Http.Extensions;
-using ChessAnalyzerApi.UI.ChessTemplateDocument;
+using ChessAnalyzerApi.TemplateMistakesPage;
 
 namespace ChessAnalyzerApi.Controllers
 {

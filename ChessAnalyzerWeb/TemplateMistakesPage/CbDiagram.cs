@@ -1,4 +1,4 @@
-﻿namespace ChessAnalyzerApi.UI.ChessTemplateDocument;
+﻿namespace ChessAnalyzerApi.TemplateMistakesPage;
 
 public class CbDiagram
 {

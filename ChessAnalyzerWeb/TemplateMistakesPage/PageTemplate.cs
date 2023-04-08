@@ -3,7 +3,7 @@ using Domain.GameAggregate;
 using ChessAnalyzerApi.Extensions;
 using Domain.Common;
 
-namespace ChessAnalyzerApi.UI.ChessTemplateDocument;
+namespace ChessAnalyzerApi.TemplateMistakesPage;
 
 internal class PageTemplate
 {
@@ -16,7 +16,7 @@ internal class PageTemplate
     {
         _link = link;
         _numPage = numPage < 1 ? 1 : numPage; // если меньше чем первая страница, то принудительно ставлю первую
-        doc.Load(Path.Combine(Environment.CurrentDirectory, @"HTML\ChessTemplateDocument\ChessbaseTemplate.html"));
+        doc.Load(Path.Combine(Environment.CurrentDirectory, @"TemplateMistakesPage\ChessbaseTemplate.html"));
         CreateDiagramPart(cbDiagrams);
         EditLinkPart();
     }
@@ -33,7 +33,7 @@ internal class PageTemplate
 
     private void CreateDiagramPart(List<ICbDiagramHtml> cbDiagrams)
     {
-        foreach(var diagram in cbDiagrams)
+        foreach (var diagram in cbDiagrams)
         {
             var diagramElem = diagram.GetDiagramElement();
             AddDiagramNode(diagramElem);
@@ -41,7 +41,7 @@ internal class PageTemplate
     }
 
     private void EditLinkPart()
-    {        
+    {
         int i = _numPage;
         var removeDigit = _link.LastIndexOf("/");
         var link = _link.Remove(removeDigit, _link.Length - removeDigit);
@@ -49,7 +49,7 @@ internal class PageTemplate
         var backLink = doc.GetElementbyId("link1");
         var nextLink = doc.GetElementbyId("link2");
 
-        if(int.Parse(nextLink.GetAttributeValue("alt", "2")) == i)
+        if (int.Parse(nextLink.GetAttributeValue("alt", "2")) == i)
         {
             nextLink.SetAttributeValue("href", $"{link}/{i}");
             nextLink.SetAttributeValue("alt", $"{i}");
