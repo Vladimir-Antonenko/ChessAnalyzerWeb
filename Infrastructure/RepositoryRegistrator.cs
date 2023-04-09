@@ -1,7 +1,8 @@
 ﻿using Domain.GameAggregate;
 using Infrastructure.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace ChessAnalyzerApi.Registrators;
+namespace Infrastructure;
 
 public static class RepositoryRegistrator
 {

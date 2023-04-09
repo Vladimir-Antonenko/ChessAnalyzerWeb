@@ -50,7 +50,7 @@ public static class ChessHelper
     /// <returns></returns>
     public static string FenToChessbaseNotation(string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")  // создает строку позиции для chessbase 
     {
-        StringBuilder Pos = new();
+        StringBuilder pos = new();
         Dictionary<string, string> wb = new();
 
         if (Chess.ChessBoard.TryLoadFromFen(fen, out var board) && board is not null)
@@ -72,18 +72,18 @@ public static class ChessHelper
             }
 
             CreatePosByColor('w');
-            Pos.Append('/');
+            pos.Append('/');
             CreatePosByColor('b');
         }
 
-        return Pos.ToString();
+        return pos.ToString();
 
         void CreatePosByColor(char color)
         {
-            Pos.Append($"{color}K{wb.First(x => x.Key.Equals($"{color}k")).Value}"); // короли есть всегда!
+            pos.Append($"{color}K{wb.First(x => x.Key.Equals($"{color}k")).Value}"); // короли есть всегда!
 
             foreach (char shape in shapes)
-                Pos.Append($"{GetFigure($"{color}{shape}")}");            
+                pos.Append($"{GetFigure($"{color}{shape}")}");            
         }
 
         string GetFigure(string find)

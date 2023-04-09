@@ -1,7 +1,7 @@
 using Infrastructure;
 using ChessAnalyzerApi.Hubs;
 using System.Net.Http.Headers;
-using ChessAnalyzerApi.Registrators;
+using ChessAnalyzerApi.Services;
 using Microsoft.EntityFrameworkCore;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;

@@ -27,23 +27,23 @@ internal class Regexes
 
     internal const string MovePattern = @"^{(([wb][bknpqr]) - )?([a-h][1-8]) - ([a-h][1-8])( - ([wb][bknpqr]))?( - (o-o|o-o-o|e\.p\.|=|=q|=r|=b|=n))?( - ([+#$]))?}$";
 
-    internal readonly static Regex regexSanOneMove = new(SanOneMovePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex SanOneMove = new(SanOneMovePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexSanMoves = new(SanMovesPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex SanMoves = new(SanMovesPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexHeaders = new(HeadersPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Headers = new(HeadersPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexAlternatives = new(AlternativesPattern, RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Alternatives = new(AlternativesPattern, RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexComments = new(CommentsPattern, RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Comments = new(CommentsPattern, RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexFen = new(FenPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Fen = new(FenPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexPiece = new(PiecePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Piece = new(PiecePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexFenPiece = new(FenPiecePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex FenPiece = new(FenPiecePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexPosition = new(PositionPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Position = new(PositionPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
-    internal readonly static Regex regexMove = new(MovePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+    internal readonly static Regex Move = new(MovePattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 }
