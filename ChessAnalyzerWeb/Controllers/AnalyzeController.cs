@@ -30,13 +30,15 @@ namespace ChessAnalyzerApi.Controllers
         }
 
         /// <summary>
-        /// Поиск всех игр игрока
+        /// Поиск игр игрока
         /// </summary>
         /// <param name="userName">Логин на lichess</param>
+        /// <param name="since">Дата поиска игр "с"</param>
+        /// <param name="until">Дата поиска игр "по"</param>
         /// <returns></returns>
         [Route("{userName}/FindPlayerGames")]
         [HttpPost]
-        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName)
+        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName, [FromQuery] DateTime since = default, [FromQuery] DateTime until = default)
         {
             var player = await _playerRepository.FindByName(userName);
             if (player is null)
@@ -45,7 +47,7 @@ namespace ChessAnalyzerApi.Controllers
                 _playerRepository.Add(player);
             }
             //AddProgressHandlerEvents(LichessService.processMsgHander); // было раньше (пока ещё не прикрутил прогресс загрузки)
-            await player.GetAllGamesFromPgn(_lichess);
+            await player.GetGamesFromPgn(_lichess, since, until);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
 
             await _playerRepository.Save();

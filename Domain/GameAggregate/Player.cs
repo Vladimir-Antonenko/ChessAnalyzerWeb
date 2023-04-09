@@ -71,11 +71,19 @@ public class Player
     /// </summary>
     /// <param name="gameSourse">Источник данных игр в виде pgn множества</param>
     /// <returns></returns>
-    public async Task GetAllGamesFromPgn(IPgn gameSourse) // получаем игры из pgn и заранее не знаем откуда именно они пришли
-    {
-        var allGames = await gameSourse.GetPgnGamesAsync(Name);
 
-        foreach(var pgn in ChessHelper.GetSplittedPGNmass(allGames.Content))
+    /// <summary>
+    /// Получить игры из стороннего Pgn файла
+    /// </summary>
+    /// <param name="gameSourse">Источник данных игр в виде pgn множества</param>
+    /// <param name="since">Дата "с"</param>
+    /// <param name="until">Дата "по"</param>
+    /// <returns></returns>
+    public async Task GetGamesFromPgn(IPgn gameSourse, DateTime since = default, DateTime until = default) // получаем игры из pgn и заранее не знаем откуда именно они пришли
+    {
+        var loadedGames = await gameSourse.GetPgnGamesAsync(Name, since, until);
+
+        foreach(var pgn in ChessHelper.GetSplittedPGNmass(loadedGames.Content))
         {
             var game = Game.Create(pgn);
             TryAddGame(game);
