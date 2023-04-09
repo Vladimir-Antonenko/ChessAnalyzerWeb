@@ -79,10 +79,12 @@ public class Position
     /// </summary>
     /// <param name="serviceEvaluation">Сервис оценки позииции</param>
     /// <returns></returns>
-    public async Task GetPositionEvaluation(IPositionEvaluation serviceEvaluation)
+    public async Task GetPositionEvaluation(IPositionEvaluation serviceEvaluation, int searchDepth = 21)
     {
         var positionEvaluation = await serviceEvaluation.GetPositionEvaluationAsync(Fen);
-        SetEvaluation(positionEvaluation);
+
+        if (positionEvaluation.Depth >= searchDepth)
+            SetEvaluation(positionEvaluation);
     }
 
     /// <summary>
