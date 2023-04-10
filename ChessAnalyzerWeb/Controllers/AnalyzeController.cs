@@ -1,4 +1,5 @@
 using Domain.GameAggregate;
+using ChessAnalyzerApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using ChessAnalyzerApi.Extensions;
 using ChessAnalyzerApi.Services.Analyze;
@@ -55,20 +56,19 @@ namespace ChessAnalyzerApi.Controllers
         /// <summary>
         /// Запускает анализ игр игрока
         /// </summary>
-        /// <param name="userName">Логин игрока, партии которого будут анализироваться</param>
-        /// <param name="precision">Точность перепада оценки для признания хода в позиции ошибочным</param>
+        /// <param name="infoModel">Данные необходимые для начала анализа</param>
         /// <param name="cancelToken">Токен отмены выполнения операции (он же HttpContext.RequestAborted)</param>
         /// <returns></returns>
-        [Route("AnalyzeGames/userName={userName}&precision={precision}")]
-        [HttpGet]
-        public async Task<ActionResult<bool>> AnalyzeGames([FromRoute] string userName, [FromRoute] double precision, CancellationToken cancelToken)
+        [Route("AnalyzeGames")]
+        [HttpPost]
+        public async Task<ActionResult<bool>> AnalyzeGames([FromBody] AnalyzeInfoModel infoModel, CancellationToken cancelToken)
         {
-            var player = await _playerRepository.FindByName(userName);
+            var player = await _playerRepository.FindByName(infoModel.userName);
 
             if (player is null)
                 return NotFound(new { message = "Логин не найден" });
 
-            await _analyzeService.RunAnalyzePlayerGames(player, precision, cancelToken);
+            await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken);
 
             await _playerRepository.Save(); // Пока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). Если оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
             return Ok();

@@ -37,6 +37,11 @@ async function RunAnalyze(controller)
     const name = document.getElementById("userName").value;
     const precision = document.getElementById("precision").value;
 
+    const infoData = {
+        userName: name,
+        precision: precision
+    }
+
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/notifications")
         .build();
@@ -54,9 +59,10 @@ async function RunAnalyze(controller)
         document.getElementById("progressId").textContent = message;
     });
 
-    const response = await fetch(`/api/AnalyzeGames/userName=${name}&precision=${precision}`, {
-        method: "GET",
-        headers: { "Accept": "text/html" },
+    const response = await fetch(`/api/AnalyzeGames`, {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify(infoData),
         signal: controller.signal
     });
 
@@ -67,6 +73,7 @@ async function RunAnalyze(controller)
     }
 }
 
+// для сигнала отмены
 const controller = new AbortController();
 
 // отмена анализа партий
