@@ -26,19 +26,13 @@ function reset() {
         document.getElementById("userName").value = "";
 }
 
-async function CancelAnalyze() {
-
-    const response = await fetch(`/api/CancelAnalyze/userName=${name}`, {
-        method: "GET",
-        headers: { "Accept": "application/json" }
-
-    });
-    // если запрос прошел нормально
-    if (response.ok === true)
-        alert("Операция анализа прервана!");
+async function CancelAnalyze(controller)
+{
+    controller.abort();
+    alert("Операция анализа прервана!");
 }
 
-async function RunAnalyze()
+async function RunAnalyze(controller)
 {
     const name = document.getElementById("userName").value;
     const precision = document.getElementById("precision").value;
@@ -62,7 +56,8 @@ async function RunAnalyze()
 
     const response = await fetch(`/api/AnalyzeGames/userName=${name}&precision=${precision}`, {
         method: "GET",
-        headers: { "Accept": "text/html" }
+        headers: { "Accept": "text/html" },
+        signal: controller.signal
     });
 
     // если запрос прошел нормально
@@ -72,11 +67,13 @@ async function RunAnalyze()
     }
 }
 
+const controller = new AbortController();
+
 // отмена анализа партий
-document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze());
+document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze(controller));
 
 // запуск анализа партий
-document.getElementById("analyzeBtn").addEventListener("click", () => RunAnalyze());
+document.getElementById("analyzeBtn").addEventListener("click", () => RunAnalyze(controller));
 
 // сброс значений формы
 document.getElementById("resetBtn").addEventListener("click", () => reset());

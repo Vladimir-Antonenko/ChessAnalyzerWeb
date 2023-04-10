@@ -84,7 +84,8 @@ public class AnalyzerService : IAnalyzeService
                     {
                         if (token.IsCancellationRequested)  // проверяем наличие сигнала отмены задачи
                         {
-                            token.ThrowIfCancellationRequested(); // генерируем исключение  
+                            return; // мягко завершаю задачу
+                            // token.ThrowIfCancellationRequested(); // генерируем исключение  
                         }
                         
                         await SendProcessNotification(playerName: player.Name, nGame: n, nMove: i, token);

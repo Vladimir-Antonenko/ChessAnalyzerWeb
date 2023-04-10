@@ -17,7 +17,6 @@ namespace ChessAnalyzerApi.Controllers
         private readonly IAnalyzeService _analyzeService;
         private readonly ILichess _lichess;
         private readonly ILogger<AnalyzeController> _logger;
-        private readonly CancellationTokenSource _ctSource;
 
         // логин для проверки nightQueen111
         public AnalyzeController(ILichess lichess, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
@@ -26,7 +25,6 @@ namespace ChessAnalyzerApi.Controllers
             _analyzeService = analyzeService;
             _lichess = lichess;
             _logger = logger;
-            _ctSource = new();
         }
 
         /// <summary>
@@ -59,17 +57,18 @@ namespace ChessAnalyzerApi.Controllers
         /// </summary>
         /// <param name="userName">Логин игрока, партии которого будут анализироваться</param>
         /// <param name="precision">Точность перепада оценки для признания хода в позиции ошибочным</param>
+        /// <param name="cancelToken">Токен отмены выполнения операции (он же HttpContext.RequestAborted)</param>
         /// <returns></returns>
         [Route("AnalyzeGames/userName={userName}&precision={precision}")]
         [HttpGet]
-        public async Task<ActionResult<bool>> AnalyzeGames([FromRoute] string userName, [FromRoute] double precision)
+        public async Task<ActionResult<bool>> AnalyzeGames([FromRoute] string userName, [FromRoute] double precision, CancellationToken cancelToken)
         {
             var player = await _playerRepository.FindByName(userName);
 
             if (player is null)
                 return NotFound(new { message = "Логин не найден" });
 
-            await _analyzeService.RunAnalyzePlayerGames(player, precision, token: _ctSource.Token);
+            await _analyzeService.RunAnalyzePlayerGames(player, precision, cancelToken);
 
             await _playerRepository.Save(); // Пока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). Если оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
             return Ok();
@@ -98,19 +97,6 @@ namespace ChessAnalyzerApi.Controllers
             return Content(html, "text/html");
 
             // return Redirect("/Home/Index");
-        }
-
-        /// <summary>
-        /// Отмена анализа партии
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        [Route("CancelAnalyze/userName={userName}")]
-        [HttpGet]
-        public async Task<ActionResult<bool>> CancelAnalyze([FromRoute] string userName)
-        {
-            await Task.Run(() => _ctSource.Cancel(true));
-            return Ok(true);
         }
     }
 }
