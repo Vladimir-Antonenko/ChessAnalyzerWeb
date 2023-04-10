@@ -45,6 +45,13 @@ namespace ChessAnalyzerApi.Controllers
             await player.GetGamesFromPgn(_lichess, since, until);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
 
+            // Из старого проекта (переделать)
+            ////private void HttpReceiveProgressEvent(object? sender, HttpProgressEventArgs e)
+            ////{
+            ////    ProgressBarValue = e.ProgressPercentage;// заполняем 
+            ////    InfoLoad = $"Загружено: {e.BytesTransferred / 1024} Кбайт / {e.TotalBytes / 1024} Кбайт"; //Выводим в лейбл информацию о процессе загрузки
+            ////}
+
             await _playerRepository.Save();
             return Ok(player.HaveAnyGames());
         }

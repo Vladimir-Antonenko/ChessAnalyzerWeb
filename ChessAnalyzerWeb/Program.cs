@@ -16,8 +16,8 @@ try
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddDbContext<BaseContext>(options =>
-     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-     .EnableSensitiveDataLogging()); 
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+               .EnableSensitiveDataLogging()); 
 
     builder.Services
         .AddEndpointsApiExplorer()

@@ -85,7 +85,7 @@ public class Player
 
         foreach(var pgn in ChessHelper.GetSplittedPGNmass(loadedGames.Content))
         {
-            var game = Game.Create(pgn);
+            var game = Game.Create(pgn, gameSourse.Platform);
             TryAddGame(game);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Domain.GameAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Configuration;
 
@@ -29,7 +30,11 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .HasComment("Строка результата из Pgn");
 
         builder.Property(x => x.DateGame)
-            .HasComment("Дата когда была сыграна партия");
+            .HasComment("Дата, когда была сыграна партия");
+
+        builder.Property(x => x.Platform)
+         .HasConversion(new EnumToNumberConverter<ChessPlatform, byte>())
+         .HasComment("Платформа, на которой была сыграна игра");
 
         builder.HasMany(x => x.Positions)
             .WithOne(x => x.Game)

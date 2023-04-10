@@ -8,6 +8,7 @@ public class Game
     public string BlackGamer { get; private set; } // черные
     public string Result { get; private set; } // строка результата
     public DateTime DateGame { get; private set; } // когда играли
+    public ChessPlatform? Platform { get; private set; } // на какой шахматной платформе игра сыграна
 
     private readonly List<Position> positions = new();
     public IReadOnlyCollection<Position> Positions => positions; // разные позиции в игре
@@ -21,9 +22,10 @@ public class Game
     /// Конструктор игры
     /// </summary>
     /// <param name="gamePgn">Pgn данные игры</param>
-    private Game(string gamePgn)
+    private Game(string gamePgn, ChessPlatform? gamePlatform)
     {
         Pgn = gamePgn;
+        Platform = gamePlatform;
         ExtractPositionsFromPgn();
     }
 
@@ -70,5 +72,5 @@ public class Game
     /// </summary>
     /// <param name="pgn">Pgn данные игры</param>
     /// <returns></returns>
-    public static Game Create(string pgn) => new(pgn);
+    public static Game Create(string pgn, ChessPlatform? platform) => new(pgn, platform);
 }

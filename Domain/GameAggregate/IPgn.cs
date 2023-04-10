@@ -2,5 +2,10 @@
 
 public interface IPgn
 {
+    /// <summary>
+    /// Платформа с которой будут получены игры
+    /// </summary>
+    public ChessPlatform? Platform { get; }
+
     public Task<Pgn> GetPgnGamesAsync(string login, DateTime since = default, DateTime until = default);
 }

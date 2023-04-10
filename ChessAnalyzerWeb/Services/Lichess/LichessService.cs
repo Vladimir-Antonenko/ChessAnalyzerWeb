@@ -13,6 +13,8 @@ public class LichessService : ILichess
     private readonly IMapper _mapper;
     private readonly HttpClient _httpClient;
 
+    public ChessPlatform? Platform => ChessPlatform.Lichess;
+
     public LichessService(IMapper mapper, IHttpClientFactory httpClientFactory) // ILogger<LichessService> logger
     {
         _mapper = mapper;
