@@ -3,6 +3,9 @@ using ChessAnalyzerApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
+using ChessAnalyzerApi.TemplateMistakesPage;
+using Microsoft.AspNetCore.Http.Extensions;
+using System;
 
 namespace ChessAnalyzerApi.Controllers
 {
@@ -76,6 +79,21 @@ namespace ChessAnalyzerApi.Controllers
             await _playerRepository.Save(); // Пока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). Если оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
             return Ok();
             // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
+        }
+
+        [Route("GetAvailablePlatforms")]
+        [HttpGet]
+        public async Task<ActionResult<Dictionary<int, string>>> GetAvailablePlatforms()
+        {
+            var platforms = await Task.Run(() =>
+                Enum.GetValues(typeof(ChessPlatform))
+               .Cast<ChessPlatform>()
+               .ToDictionary(t => (int)t, t => t.ToString()) 
+            );
+
+            // Array platforms = await Task.Run(() => Enum.GetValues(typeof(ChessPlatform))); //Enum.GetValues(typeof(ChessPlatform)).Cast<ChessPlatform>().ToList();
+            // Enum.GetNames(typeof(Enumnum));
+            return platforms;
         }
     }
 }
