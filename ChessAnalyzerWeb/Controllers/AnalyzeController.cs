@@ -2,10 +2,6 @@ using Domain.GameAggregate;
 using ChessAnalyzerApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using ChessAnalyzerApi.Services.Analyze;
-using ChessAnalyzerApi.Services.Lichess;
-using ChessAnalyzerApi.TemplateMistakesPage;
-using Microsoft.AspNetCore.Http.Extensions;
-using System;
 
 namespace ChessAnalyzerApi.Controllers
 {
@@ -15,15 +11,15 @@ namespace ChessAnalyzerApi.Controllers
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly IAnalyzeService _analyzeService;
-        private readonly ILichess _lichess;
         private readonly ILogger<AnalyzeController> _logger;
+        private readonly Func<ChessPlatform, IPgn> _pgnServiceAccessor; // дл€ паттерна стратеги€
 
         // логин дл€ проверки nightQueen111
-        public AnalyzeController(ILichess lichess, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
+        public AnalyzeController(Func<ChessPlatform, IPgn> pgnServiceAccessor, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
         {
             _playerRepository = playerRepository;
             _analyzeService = analyzeService;
-            _lichess = lichess;
+            _pgnServiceAccessor = pgnServiceAccessor;
             _logger = logger;
         }
 
@@ -34,21 +30,24 @@ namespace ChessAnalyzerApi.Controllers
         /// <param name="since">ƒата поиска игр "с"</param>
         /// <param name="until">ƒата поиска игр "по"</param>
         /// <returns></returns>
-        [Route("{userName}/FindPlayerGames")]
+        [Route("FindPlayerGames")]
         [HttpPost]
-        public async Task<ActionResult<bool>> FindPlayerGames([FromRoute] string userName, [FromQuery] DateTime since = default, [FromQuery] DateTime until = default)
+        public async Task<ActionResult<bool>> FindPlayerGames([FromBody] FindPlayerGamesModel findModel, [FromQuery] DateTime since = default, [FromQuery] DateTime until = default)
         {
-            var player = await _playerRepository.FindByName(userName);
+            var player = await _playerRepository.FindByName(findModel.userName);
             if (player is null)
             {
-                player = Player.Create(userName);
+                player = Player.Create(findModel.userName);
                 _playerRepository.Add(player);
             }
+
+            var pgnService = _pgnServiceAccessor(findModel.platform); // получаем соответствующий сервис дл€ загрузки игр
+
             //AddProgressHandlerEvents(LichessService.processMsgHander); // было раньше (пока ещЄ не прикрутил прогресс загрузки)
-            await player.GetGamesFromPgn(_lichess, since, until);
+            await player.GetGamesFromPgn(pgnService, since, until);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
 
-            // »з старого проекта (переделать)
+            // »з старого проекта (наподобие переделать)
             ////private void HttpReceiveProgressEvent(object? sender, HttpProgressEventArgs e)
             ////{
             ////    ProgressBarValue = e.ProgressPercentage;// заполн€ем 
@@ -69,12 +68,12 @@ namespace ChessAnalyzerApi.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> AnalyzeGames([FromBody] AnalyzeInfoModel infoModel, CancellationToken cancelToken)
         {
-            var player = await _playerRepository.FindByName(infoModel.userName);
+            var player = await _playerRepository.FindByName(infoModel.userName); // тут использовать FindByNameOnPlatform и ннадо добавить в модель анализа тип платформы
 
             if (player is null)
                 return NotFound(new { message = "Ћогин не найден" });
 
-            await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken);
+            await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken); // и тут анализ соответствующих игр
 
             await _playerRepository.Save(); // ѕока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). ≈сли оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
             return Ok();

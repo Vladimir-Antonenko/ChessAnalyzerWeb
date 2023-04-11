@@ -19,6 +19,14 @@ public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
                     .FirstOrDefaultAsync();
     }
 
+    public async Task<Player?> FindByNameOnPlatform(string name, ChessPlatform platform)
+    {
+        return await FindByCondition(x => x.Name == name && x.Games.Any(x => x.Platform.Equals(platform)), trackChanges: true)
+                    .Include(x => x.Games)
+                    .ThenInclude(x => x.Positions)
+                    .FirstOrDefaultAsync();
+    }
+
     public async Task<PagedList<Position>> GetMistakesWithPagination(string name, int pageNum, int pageSize)
     {
         return await FindByCondition(x => x.Name == name, trackChanges: false)

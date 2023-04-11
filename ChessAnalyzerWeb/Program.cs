@@ -1,4 +1,5 @@
 using Infrastructure;
+using Domain.GameAggregate;
 using ChessAnalyzerApi.Hubs;
 using System.Net.Http.Headers;
 using ChessAnalyzerApi.Services;
@@ -26,7 +27,22 @@ try
         .AddSignalR();
 
     builder.Services.AddEvaluationServices();
-    builder.Services.AddScoped<ILichess, LichessService>();
+    // builder.Services.AddScoped<ILichess, LichessService>(); // было
+    builder.Services.AddTransient<LichessService>();
+   // builder.Services.AddTransient<ChessComService>(); // пока не реализован
+    builder.Services.AddScoped<Func<ChessPlatform, IPgn>> (serviceProvider => key =>
+    {
+        switch (key)
+        {
+            case ChessPlatform.Lichess:
+                return serviceProvider.GetRequiredService<LichessService>(); // GetRequiredService with exception if not registrated!
+            //case ChessPlatform.ChessCom:
+            //    return serviceProvider.GetRequiredService<ChessComService>();
+            default:
+                throw new KeyNotFoundException();
+        }
+    });
+
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();
     builder.Services.AddScoped<IChessDBService, ChessDBService>();
 
