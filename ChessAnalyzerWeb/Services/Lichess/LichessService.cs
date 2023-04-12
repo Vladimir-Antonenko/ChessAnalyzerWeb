@@ -31,29 +31,29 @@ public class LichessService : ILichess
     /// <param name="since">С какой даты необходимо получить игры</param>
     /// <param name="until">По какую дату нужны игры</param>
     /// <returns></returns>
-    private static string GamesString(string login, DateTime since = default, DateTime until = default)
+    private static string GamesString(string login, DateTime? since, DateTime? until)
     {
         string gameString = @$"games/user/{login}?";
-        gameString += since != default ? $"{nameof(since)}={since.ToUnixTimestamp()}" : string.Empty;
-        gameString += until != default ? $"{nameof(until)}={until.ToUnixTimestamp()}" : string.Empty;
+        gameString += since is not null ? $"{nameof(since)}={since.ToUnixTimestamp()}" : string.Empty;
+        gameString += until is not null ? $"{nameof(until)}={until.ToUnixTimestamp()}" : string.Empty;
 
         return gameString;
     }
 
     /// <summary>
-    /// Получить игры пользователя зная строку фильтра параметров
+    /// Получить игры пользователя в диапазоне дат {since : until}
     /// </summary>
     /// <param name="login">Логин игрока</param>
     /// <param name="since">С какой даты необходимо получить игры</param>
     /// <param name="until">По какую дату нужны игры</param>
     /// <returns></returns>
-    private async Task<Pgn> GetLichessGamesAsync(string login, DateTime since = default, DateTime until = default)
+    public async Task<Pgn> GetPgnGamesAsync(string login, DateTime? since, DateTime? until)
     {
         LichessPgnModel lichessPgn = new();
         string allGames = string.Empty;
 
         var requestUri = GamesString(login, since, until);
-        var response = await _httpClient.GetAsync(requestUri);     
+        var response = await _httpClient.GetAsync(requestUri);
         if (response.IsSuccessStatusCode)
         {
             allGames = await response.Content.ReadAsStringAsync(); // нужно написать mediaTypeFormatter для "application/x-chess-pgn" и считать по-нормальному не в string
@@ -81,16 +81,6 @@ public class LichessService : ILichess
 
         return _mapper.Map<LichessEvaluationModel, PositionEvaluation>(instance);
     }
-
-    /// <summary>
-    /// Получить все игры пользователя в диапазоне дат {since : until}
-    /// </summary>
-    /// <param name="login">Логин игрока</param>
-    /// <param name="since">С какой даты необходимо получить игры</param>
-    /// <param name="until">По какую дату нужны игры</param>
-    /// <returns></returns>
-    public async Task<Pgn> GetPgnGamesAsync(string login, DateTime since = default, DateTime until = default)
-        => await GetLichessGamesAsync(login, since, until);
 
     // попытка создать вшенший движок личесс
     //public async Task CreateEngineAsync()

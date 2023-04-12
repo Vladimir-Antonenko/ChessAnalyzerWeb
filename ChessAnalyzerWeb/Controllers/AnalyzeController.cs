@@ -32,7 +32,7 @@ namespace ChessAnalyzerApi.Controllers
         /// <returns></returns>
         [Route("FindPlayerGames")]
         [HttpPost]
-        public async Task<ActionResult<bool>> FindPlayerGames([FromBody] FindPlayerGamesModel findModel, [FromQuery] DateTime since = default, [FromQuery] DateTime until = default)
+        public async Task<ActionResult<bool>> FindPlayerGames([FromBody] FindPlayerGamesModel findModel)
         {
             var player = await _playerRepository.FindByName(findModel.userName);
             if (player is null)
@@ -44,7 +44,7 @@ namespace ChessAnalyzerApi.Controllers
             var pgnService = _pgnServiceAccessor(findModel.platform); // получаем соответствующий сервис дл€ загрузки игр
 
             //AddProgressHandlerEvents(LichessService.processMsgHander); // было раньше (пока ещЄ не прикрутил прогресс загрузки)
-            await player.GetGamesFromPgn(pgnService, since, until);
+            await player.GetGamesFromPgn(pgnService, findModel.since, findModel.until);
             //RemoveProgressHandlerEvents(LichessService.processMsgHander);
 
             // »з старого проекта (наподобие переделать)
@@ -76,8 +76,8 @@ namespace ChessAnalyzerApi.Controllers
             await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken); // и тут анализ соответствующих игр
 
             await _playerRepository.Save(); // ѕока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). ≈сли оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
+            
             return Ok();
-            // RedirectToAction("RunAnalyzeGames", ); // тут надо параметры перечислить если вообще использовать
         }
 
         [Route("GetAvailablePlatforms")]

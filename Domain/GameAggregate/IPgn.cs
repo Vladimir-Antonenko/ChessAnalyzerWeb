@@ -7,5 +7,5 @@ public interface IPgn
     /// </summary>
     public ChessPlatform? Platform { get; }
 
-    public Task<Pgn> GetPgnGamesAsync(string login, DateTime since = default, DateTime until = default);
+    public Task<Pgn> GetPgnGamesAsync(string login, DateTime? since, DateTime? until);
 }

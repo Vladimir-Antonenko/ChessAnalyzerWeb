@@ -1,6 +1,7 @@
 ﻿using Domain.GameAggregate;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace ChessAnalyzerApi.Models;
 
@@ -16,6 +17,16 @@ public class FindPlayerGamesModel
     /// <summary>
     /// Шахматная платформа на которой ищем игру
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+   // [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChessPlatform platform { get; set; }
+
+    /// <summary>
+    /// Дата поиска игр "с"
+    /// </summary>
+    public DateTime? since { get; set; }
+
+    /// <summary>
+    /// Дата поиска игр "по"
+    /// </summary>
+    public DateTime? until { get; set; }
 }

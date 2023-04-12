@@ -79,7 +79,7 @@ public class Player
     /// <param name="since">Дата "с"</param>
     /// <param name="until">Дата "по"</param>
     /// <returns></returns>
-    public async Task GetGamesFromPgn(IPgn gameSourse, DateTime since = default, DateTime until = default) // получаем игры из pgn и заранее не знаем откуда именно они пришли
+    public async Task GetGamesFromPgn(IPgn gameSourse, DateTime? since, DateTime? until) // получаем игры из pgn и заранее не знаем откуда именно они пришли
     {
         var loadedGames = await gameSourse.GetPgnGamesAsync(Name, since, until);
 
