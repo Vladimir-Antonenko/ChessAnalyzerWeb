@@ -4,9 +4,9 @@ using Domain.GameAggregate;
 
 namespace ChessAnalyzerApi.Services.Lichess.Mapping;
 
-public class PgnProfile : Profile
+public class LichessPgnProfile : Profile
 {
-    public PgnProfile()
+    public LichessPgnProfile()
     {
         CreateMap<LichessPgnModel, Pgn>()
             .ForMember(dest => dest.Content, opt => opt.MapFrom(u => u.Content))

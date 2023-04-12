@@ -92,7 +92,7 @@ namespace ChessAnalyzerApi.Controllers
 
             // Array platforms = await Task.Run(() => Enum.GetValues(typeof(ChessPlatform))); //Enum.GetValues(typeof(ChessPlatform)).Cast<ChessPlatform>().ToList();
             // Enum.GetNames(typeof(Enumnum));
-            return platforms;
+            return Ok(platforms);
         }
     }
 }

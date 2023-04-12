@@ -9,6 +9,7 @@ using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.ChessDB;
 using ChessAnalyzerApi.Services.Lichess.Mapping;
 using ChessAnalyzerApi.Services.ChessDB.Mapping;
+using ChessAnalyzerApi.Services.ChessCom.Mapping;
 
 try
 {
@@ -53,15 +54,22 @@ try
             client.BaseAddress = new Uri(builder.Configuration["LichessApiBaseUrl"]!);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", builder.Configuration["LichessToken"]);
         });
+    builder.Services.AddHttpClient("ChessComAPI",
+        client =>
+        {
+            client.BaseAddress = new Uri(builder.Configuration["ChessComApiBaseUrl"]!);
+        });
 
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ChessDB"));
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LichessAPI"));
+    builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ChessComAPI"));
 
     builder.Services.AddAutoMapper(config =>
             {
-                config.AddProfile<EvaluationProfile>();
-                config.AddProfile<PgnProfile>();
+                config.AddProfile<LichessEvaluationProfile>();
+                config.AddProfile<LichessPgnProfile>();
                 config.AddProfile<QueryPvProfile>();
+                config.AddProfile<ChessComPgnProfile>();
             });
 
     var app = builder.Build();

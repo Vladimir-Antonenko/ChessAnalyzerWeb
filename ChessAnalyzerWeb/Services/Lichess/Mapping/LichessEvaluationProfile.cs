@@ -4,9 +4,9 @@ using ChessAnalyzerApi.ExternalApi.Lichess.Models;
 
 namespace ChessAnalyzerApi.Services.Lichess.Mapping;
 
-public class EvaluationProfile : Profile
+public class LichessEvaluationProfile : Profile
 {
-    public EvaluationProfile()
+    public LichessEvaluationProfile()
     {
         CreateMap<LichessEvaluationModel, PositionEvaluation>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
