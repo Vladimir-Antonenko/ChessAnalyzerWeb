@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.GameAggregate;
+using System.ComponentModel.DataAnnotations;
 
 namespace ChessAnalyzerApi.Models;
 
@@ -17,4 +18,9 @@ public class AnalyzeInfoModel
     [Required(ErrorMessage = "Обязательное поле!")]
     [Range(minimum: 0.1d, maximum: 10.0d, ErrorMessage = "Точность перепада оценки ∈ [0.1, 10]")]
     public double precision { get; set; }
+
+    /// <summary>
+    /// Шахматная платформа на которой игрок играл свои партии
+    /// </summary>
+    public ChessPlatform platform { get; set; }
 }

@@ -68,12 +68,12 @@ namespace ChessAnalyzerApi.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> AnalyzeGames([FromBody] AnalyzeInfoModel infoModel, CancellationToken cancelToken)
         {
-            var player = await _playerRepository.FindByName(infoModel.userName); // тут использовать FindByNameOnPlatform и ннадо добавить в модель анализа тип платформы
+            var player = await _playerRepository.FindByNameOnPlatform(infoModel.userName, infoModel.platform);
 
             if (player is null)
-                return NotFound(new { message = "Логин не найден" });
+                return NotFound(new { message = $"Не найден логин с играми, которые сыграны платформе {Enum.GetName(infoModel.platform)}!" });
 
-            await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken); // и тут анализ соответствующих игр
+            await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken);
 
             await _playerRepository.Save(); // Пока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). Если оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
             
