@@ -12,8 +12,10 @@ public static class ChessHelper
 
     /// <summary>
     /// Регулярное выражения проверки корректности формату fen
-    /// </summary>
-    private static readonly Regex RegexFen = new(@"^(?:[pnbrqkPNBRQK1-8]+/){7}[pnbrqkPNBRQK1-8]+\s(?:b|w)\s(?:-|K?Q?k?q)\s(?:-|[a-h][3-6])(?:\s+(?:\d+)){0,2}$", RegexOptions.Compiled);
+    /// </summary>     
+    private static readonly Regex RegexFen = new(@"\s*^(((?:[rnbqkpRNBQKP1-8]+\/){7})[rnbqkpRNBQKP1-8]+)\s([b|w])\s(-|[K|Q|k|q]{1,4})\s(-|[a-h][1-8])\s(\d+\s\d+)$", RegexOptions.Compiled);
+    // private static readonly Regex RegexFen = new(@"^(?:[pnbrqkPNBRQK1-8]+/){7}[pnbrqkPNBRQK1-8]+\s(?:b|w)\s(?:-|K?Q?k?q)\s(?:-|[a-h][3-6])(?:\s+(?:\d+)){0,2}$", RegexOptions.Compiled); // почему-то иногда сбоит
+    // private static readonly Regex RegexFen = new(@"\s*^(((?:[rnbqkpRNBQKP1-8]+\/){7})[rnbqkpRNBQKP1-8]+)\s([b|w])\s([K|Q|k|q]{1,4})\s(-|[a-h][1-8])\s(\d+\s\d+)$", RegexOptions.Compiled); // тоже через раз
 
     /// <summary>
     /// Фигуры используемые для нотации

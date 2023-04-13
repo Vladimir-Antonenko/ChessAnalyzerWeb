@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.ChessDB;
+using ChessAnalyzerApi.Services.ChessCom;
 using ChessAnalyzerApi.Services.Lichess.Mapping;
 using ChessAnalyzerApi.Services.ChessDB.Mapping;
 using ChessAnalyzerApi.Services.ChessCom.Mapping;
@@ -28,17 +29,18 @@ try
         .AddSignalR();
 
     builder.Services.AddEvaluationServices();
-    // builder.Services.AddScoped<ILichess, LichessService>(); // было
+
+    // For strategy!
     builder.Services.AddTransient<LichessService>();
-   // builder.Services.AddTransient<ChessComService>(); // пока не реализован
+    builder.Services.AddTransient<ChessComService>();
     builder.Services.AddScoped<Func<ChessPlatform, IPgn>> (serviceProvider => key =>
     {
         switch (key)
         {
             case ChessPlatform.Lichess:
                 return serviceProvider.GetRequiredService<LichessService>(); // GetRequiredService with exception if not registrated!
-            //case ChessPlatform.ChessCom:
-            //    return serviceProvider.GetRequiredService<ChessComService>();
+            case ChessPlatform.ChessCom:
+                return serviceProvider.GetRequiredService<ChessComService>();
             default:
                 throw new KeyNotFoundException();
         }
