@@ -1,6 +1,6 @@
-﻿using ChessAnalyzerApi.Extensions;
-using ChessAnalyzerApi.Hubs;
+﻿using Domain.Extensions;
 using Domain.GameAggregate;
+using ChessAnalyzerApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Position = Domain.GameAggregate.Position;
 

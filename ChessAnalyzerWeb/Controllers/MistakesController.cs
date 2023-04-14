@@ -1,6 +1,6 @@
-﻿using Domain.GameAggregate;
+﻿using Domain.Extensions;
+using Domain.GameAggregate;
 using Microsoft.AspNetCore.Mvc;
-using ChessAnalyzerApi.Extensions;
 using Microsoft.AspNetCore.Http.Extensions;
 using ChessAnalyzerApi.TemplateMistakesPage;
 

@@ -1,7 +1,7 @@
 ﻿using Domain.Common;
 using HtmlAgilityPack;
+using Domain.Extensions;
 using Domain.GameAggregate;
-using ChessAnalyzerApi.Extensions;
 
 namespace ChessAnalyzerApi.TemplateMistakesPage;
 

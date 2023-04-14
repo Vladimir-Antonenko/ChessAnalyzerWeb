@@ -1,18 +1,30 @@
 ﻿// Добавление пользователя
-async function createUser(userName) {
+async function createUser(name, platform, since, until)
+{
+    const findModel = {
+        userName: name,
+        platform: platform,
+        since: since,
+        until: until
+    }
 
-    const response = await fetch(`/api/${userName}/FindPlayerGames`, {
+    const response = await fetch(`/api/FindPlayerGames`, {
         method: "POST",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-            name: userName
-        })
+        body: JSON.stringify(findModel)
     });
-    if (response.ok === true) {
-        // делаю доступным кнопку анализа
-        let blockId = document.getElementById("analyzeBlock");
-        //blockId.setAttribute("visibility", "visible");
-        blockId.removeAttribute("hidden");
+
+    if (response.ok === true)
+    {
+        const res = await response.json();
+        if (res.value) {
+            // делаю доступным кнопку анализа
+            let blockId = document.getElementById("analyzeBlock");
+            //blockId.setAttribute("visibility", "visible");
+            blockId.removeAttribute("hidden");
+        }
+        else
+            alert("По заданным параметрам игры не найдены!");
     }
     else {
         const error = await response.json();
@@ -21,7 +33,8 @@ async function createUser(userName) {
 }
 
 // сброс данных формы после отправки
-function reset() {
+function reset()
+{
     document.getElementById("userId").value =
         document.getElementById("userName").value = "";
 }
@@ -36,45 +49,85 @@ async function RunAnalyze(controller)
 {
     const name = document.getElementById("userName").value;
     const precision = document.getElementById("precision").value;
+    //платформа
+    const selPl = document.getElementById("platformId");
+    const platform = selPl.options[selPl.selectedIndex].value;
 
-    const infoData = {
-        userName: name,
-        precision: precision
-    }
+    if (name && precision && platform)
+    {
 
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/notifications")
-        .build();
+        const infoData = {
+            userName: name,
+            precision: precision,
+            platform: platform
+        }
 
-    hubConnection.start().then(() => {
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/notifications")
+            .build();
 
-        console.log('Connection started!');
-        hubConnection.invoke("JoinGroup", name).catch(function (err) {
-            return console.error(err.toString());
+        hubConnection.start().then(() => {
+
+            console.log('Connection started!');
+            hubConnection.invoke("JoinGroup", name).catch(function (err) {
+                return console.error(err.toString());
+            });
+        })
+            .catch(err => console.log('Error while establishing connection :('));
+
+        hubConnection.on("Notification", function (message) {
+            document.getElementById("progressId").textContent = message;
         });
-    })
-        .catch(err => console.log('Error while establishing connection :('));
 
-    hubConnection.on("Notification", function (message) {
-        document.getElementById("progressId").textContent = message;
+        const response = await fetch(`/api/AnalyzeGames`, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify(infoData),
+            signal: controller.signal
+        });
+
+        // если запрос прошел нормально
+        if (response.ok === true) {
+            alert("Партии проанализированы");
+            window.location.replace(`/api/${name}/Lichess/Mistakes/1`)
+        }
+    }
+    else
+        alert("Не все необходимые данные выбраны для начала анализа!");
+}
+
+async function LoadPlatforms()
+{
+    const response = await fetch(`/api/GetAvailablePlatforms`, {
+        method: "Get",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" }     
     });
 
-    const response = await fetch(`/api/AnalyzeGames`, {
-        method: "POST",
-        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify(infoData),
-        signal: controller.signal
-    });
+    if (response.ok === true)
+    {
+        const platform = document.getElementById("platformId");
 
-    // если запрос прошел нормально
-    if (response.ok === true) {
-        alert("Партии проанализированы");
-        window.location.replace(`/api/${name}/Lichess/Mistakes/1`)
+        const dic = await response.json();
+        for (var key in dic)
+        {
+            var option = document.createElement("option");
+            option.text = dic[key];
+            option.value = key;
+            platform.add(option);
+        }
+    }
+    else
+    {
+        const error = await response.json();
+        console.log(error.message);
     }
 }
 
 // для сигнала отмены
 const controller = new AbortController();
+
+// загрузка выбора платформ
+LoadPlatforms();
 
 // отмена анализа партий
 document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze(controller));
@@ -85,10 +138,23 @@ document.getElementById("analyzeBtn").addEventListener("click", () => RunAnalyze
 // сброс значений формы
 document.getElementById("resetBtn").addEventListener("click", () => reset());
 
-document.getElementById("findBtn").addEventListener("click", async () => {
-
-    const id = document.getElementById("userId").value;
+document.getElementById("findBtn").addEventListener("click", async () =>
+{
+    // логин
     const name = document.getElementById("userName").value;
-    if (id === "")
-        await createUser(name);
+
+    // дата С
+    let since = document.getElementById("dateFrom").value;
+    since = since ? new Date(since) : null;
+
+    // Дата По
+    let until = document.getElementById("dateTo").value;
+    until = until ? new Date(until) : null;
+
+    //платформа
+    const selPl = document.getElementById("platformId");
+    const platform = selPl.options[selPl.selectedIndex].value;
+
+    if (name && platform)
+        await createUser(name, platform, since, until);
 });

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ChessAnalyzerApi.Extensions;
+using Domain.Extensions;
 
 namespace ChessAnalyzerApi.ExtensionsChessAnalyzerApi.Extensions
 {

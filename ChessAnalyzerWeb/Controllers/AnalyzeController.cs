@@ -26,9 +26,7 @@ namespace ChessAnalyzerApi.Controllers
         /// <summary>
         /// Поиск игр игрока
         /// </summary>
-        /// <param name="userName">Логин на lichess</param>
-        /// <param name="since">Дата поиска игр "с"</param>
-        /// <param name="until">Дата поиска игр "по"</param>
+        /// <param name="findModel">Данные для поиска игр игрока на выбранной шахматной платформе</param>
         /// <returns></returns>
         [Route("FindPlayerGames")]
         [HttpPost]
@@ -55,7 +53,9 @@ namespace ChessAnalyzerApi.Controllers
             ////}
 
             await _playerRepository.Save();
-            return Ok(player.HaveAnyGames());
+            var anyGames = player.HaveAnyGamesOnPlatform(findModel.platform, findModel.since, findModel.until);
+
+            return Ok(anyGames);
         }
 
         /// <summary>
@@ -80,6 +80,10 @@ namespace ChessAnalyzerApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Возвращает словарь поддерживаемых шахматных платформ
+        /// </summary>
+        /// <returns></returns>
         [Route("GetAvailablePlatforms")]
         [HttpGet]
         public async Task<ActionResult<Dictionary<int, string>>> GetAvailablePlatforms()
@@ -90,8 +94,6 @@ namespace ChessAnalyzerApi.Controllers
                .ToDictionary(t => (int)t, t => t.ToString()) 
             );
 
-            // Array platforms = await Task.Run(() => Enum.GetValues(typeof(ChessPlatform))); //Enum.GetValues(typeof(ChessPlatform)).Cast<ChessPlatform>().ToList();
-            // Enum.GetNames(typeof(Enumnum));
             return Ok(platforms);
         }
     }

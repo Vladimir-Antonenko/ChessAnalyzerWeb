@@ -1,4 +1,4 @@
-﻿namespace ChessAnalyzerApi.Extensions;
+﻿namespace Domain.Extensions;
 
 public static class IEnumerableExtensions
 {

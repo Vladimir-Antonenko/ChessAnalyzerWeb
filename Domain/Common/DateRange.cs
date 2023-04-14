@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.Globalization;
-using System.Net.Http.Headers;
-
-namespace Domain.Common;
+﻿namespace Domain.Common;
 
 public class DateRange
 {

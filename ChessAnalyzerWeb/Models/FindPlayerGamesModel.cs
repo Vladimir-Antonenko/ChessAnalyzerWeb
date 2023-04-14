@@ -1,5 +1,4 @@
 ﻿using Domain.GameAggregate;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,7 +16,7 @@ public class FindPlayerGamesModel
     /// <summary>
     /// Шахматная платформа на которой ищем игру
     /// </summary>
-   // [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChessPlatform platform { get; set; }
 
     /// <summary>

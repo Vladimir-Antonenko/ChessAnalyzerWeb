@@ -1,4 +1,6 @@
-﻿namespace Domain.GameAggregate;
+﻿using Domain.Extensions;
+
+namespace Domain.GameAggregate;
 
 public class Player
 {
@@ -91,11 +93,19 @@ public class Player
     }
 
     /// <summary>
-    /// Проверяет есть ли игры у игрока
+    /// Проверяет есть ли у игрока игры на выбранной платформе
     /// </summary>
+    /// <param name="since">Дата "с"</param>
+    /// <param name="until">Дата "по"</param>
     /// <returns></returns>
-    public bool HaveAnyGames() => games.Any();
+    public bool HaveAnyGamesOnPlatform(ChessPlatform chessPlatform, DateTime? since, DateTime? until)
+    {
+        var dateSince = since ?? DateTime.MinValue;
+        var dateUntil = until ?? DateTime.MaxValue;
 
+        return games.Any(g => g.Platform.Equals(chessPlatform) && g.DateGame.InRange(dateSince, dateUntil));
+    }
+       
     /// <summary>
     /// Фабричный метод создания игроков
     /// </summary>

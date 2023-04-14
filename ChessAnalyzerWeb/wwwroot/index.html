@@ -5,12 +5,20 @@
     <link rel="stylesheet" type="text/css" href="indexStyle.css" />   
 </head>
 <body>
-    <h2>Ввод пользователя Lichess</h2>
+    <h2>Поиск шахматных ошибок</h2>
     <div>
         <input type="hidden" id="userId" />
         <p>
             Логин:<br />
             <input id="userName" />
+            Платформа
+            <select id="platformId" size="1">
+                <option disabled>Выберите платформу</option>
+            </select>
+            Дата с
+            <input id="dateFrom" type="date">
+            Дата по
+            <input id="dateTo" type="date">
         </p>
         <p>
             <button id="findBtn">Поиск партий</button>

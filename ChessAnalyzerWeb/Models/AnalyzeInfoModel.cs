@@ -1,4 +1,5 @@
 ﻿using Domain.GameAggregate;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
 namespace ChessAnalyzerApi.Models;
@@ -22,5 +23,6 @@ public class AnalyzeInfoModel
     /// <summary>
     /// Шахматная платформа на которой игрок играл свои партии
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChessPlatform platform { get; set; }
 }

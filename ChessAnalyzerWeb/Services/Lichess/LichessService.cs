@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Domain.Extensions;
 using Domain.GameAggregate;
-using ChessAnalyzerApi.Extensions;
 using ChessAnalyzerApi.ExternalApi.Lichess.Models;
 
 namespace ChessAnalyzerApi.Services.Lichess;
