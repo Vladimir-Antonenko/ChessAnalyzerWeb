@@ -47,7 +47,7 @@ public class AnalyzerService : IAnalyzeService
     /// <param name="nMove">Номер хода</param>
     /// <param name="token">Отмен отмены</param>
     /// <returns></returns>
-    private async Task SendProcessNotification(string playerName, ChessPlatform platform, int nGame, int nMove, CancellationToken token)
+    private async Task SendProcessNotification(string playerName, ChessPlatform? platform, int nGame, int nMove, CancellationToken token)
     {
         await _hubContext.Clients
             .Group($"{platform}{playerName}")
@@ -89,7 +89,7 @@ public class AnalyzerService : IAnalyzeService
                             // token.ThrowIfCancellationRequested(); // генерируем исключение  
                         }
                         
-                        await SendProcessNotification(playerName: player.Name, nGame: n, nMove: i, token);
+                        await SendProcessNotification(playerName: player.Name, platform: game.Platform, nGame: n, nMove: i, token);
                         await AnalyzePosition(position);
 
                         if (position.IsEvaluated())
