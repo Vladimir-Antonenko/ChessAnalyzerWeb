@@ -35,15 +35,12 @@ try
     builder.Services.AddTransient<ChessComService>();
     builder.Services.AddScoped<Func<ChessPlatform, IPgn>> (serviceProvider => key =>
     {
-        switch (key)
+        return key switch
         {
-            case ChessPlatform.Lichess:
-                return serviceProvider.GetRequiredService<LichessService>(); // GetRequiredService with exception if not registrated!
-            case ChessPlatform.ChessCom:
-                return serviceProvider.GetRequiredService<ChessComService>();
-            default:
-                throw new KeyNotFoundException();
-        }
+            ChessPlatform.Lichess => serviceProvider.GetRequiredService<LichessService>(),// GetRequiredService with exception if not registrated!
+            ChessPlatform.ChessCom => serviceProvider.GetRequiredService<ChessComService>(),
+            _ => throw new KeyNotFoundException(),
+        };
     });
 
     builder.Services.AddScoped<IAnalyzeService, AnalyzerService>();

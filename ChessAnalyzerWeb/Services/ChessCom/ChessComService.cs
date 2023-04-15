@@ -64,7 +64,7 @@ public class ChessComService : IChessCom
             pgnParts.Add(part);
         }
 
-        pgnModel.Content = string.Join(null, pgnParts);
+        pgnModel.Content = string.Join("\n\n", pgnParts);
 
         return _mapper.Map<ChessComPgnModel, Pgn>(pgnModel);
     }
