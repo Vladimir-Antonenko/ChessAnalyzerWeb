@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Domain.GameAggregate;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ChessAnalyzerApi.Hubs;
 
 public class NotificationHub : Hub
 {
-    public async Task JoinGroup(string groupName)
+    public async Task JoinGroup(string playerName, ChessPlatform platform)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"{platform}{playerName}");
     }
 
-    public async Task LeaveGroup(string groupName)
+    public async Task LeaveGroup(string playerName, ChessPlatform platform)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{platform}{playerName}");
     }
 
     //public override async Task OnConnectedAsync()

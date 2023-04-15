@@ -42,14 +42,15 @@ public class AnalyzerService : IAnalyzeService
     /// Отправка клиенту уведомлений о прогрессе анализа на основе вебсокета
     /// </summary>
     /// <param name="playerName">Имя игрока</param>
+    /// <param name="platform">Платформа на которой сыграна игра</param>
     /// <param name="nGame">Номер анализируемой игры</param>
     /// <param name="nMove">Номер хода</param>
     /// <param name="token">Отмен отмены</param>
     /// <returns></returns>
-    private async Task SendProcessNotification(string playerName, int nGame, int nMove, CancellationToken token)
+    private async Task SendProcessNotification(string playerName, ChessPlatform platform, int nGame, int nMove, CancellationToken token)
     {
         await _hubContext.Clients
-            .Group(playerName)
+            .Group($"{platform}{playerName}")
             .SendAsync(method: "Notification",
                        $"Игра номер {nGame + 1}. Анализирую ход {Math.Ceiling((double)nMove / 2)}",
                         cancellationToken: token);

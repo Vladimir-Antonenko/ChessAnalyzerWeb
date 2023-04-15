@@ -23,6 +23,7 @@ public class AnalyzeInfoModel
     /// <summary>
     /// Шахматная платформа на которой игрок играл свои партии
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [Required(ErrorMessage = "Обязательное поле!")]
+    //[JsonConverter(typeof(JsonStringEnumConverter))]
     public ChessPlatform platform { get; set; }
 }

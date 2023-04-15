@@ -16,7 +16,8 @@ public class FindPlayerGamesModel
     /// <summary>
     /// Шахматная платформа на которой ищем игру
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [Required(ErrorMessage = "Обязательное поле!")]
+  //  [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChessPlatform platform { get; set; }
 
     /// <summary>

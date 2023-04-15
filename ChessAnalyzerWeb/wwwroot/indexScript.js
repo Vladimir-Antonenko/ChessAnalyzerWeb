@@ -17,7 +17,8 @@ async function createUser(name, platform, since, until)
     if (response.ok === true)
     {
         const res = await response.json();
-        if (res.value) {
+
+        if (res) {
             // делаю доступным кнопку анализа
             let blockId = document.getElementById("analyzeBlock");
             //blockId.setAttribute("visibility", "visible");
@@ -69,7 +70,7 @@ async function RunAnalyze(controller)
         hubConnection.start().then(() => {
 
             console.log('Connection started!');
-            hubConnection.invoke("JoinGroup", name).catch(function (err) {
+            hubConnection.invoke("JoinGroup", name, platform).catch(function (err) {
                 return console.error(err.toString());
             });
         })

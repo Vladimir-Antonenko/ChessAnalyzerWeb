@@ -4,6 +4,7 @@ using ChessAnalyzerApi.Hubs;
 using System.Net.Http.Headers;
 using ChessAnalyzerApi.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.ChessDB;
@@ -16,7 +17,8 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())); // для преобразования параметров с клиента в enum'ку
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddDbContext<BaseContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -26,7 +28,11 @@ try
         .AddEndpointsApiExplorer()
         .AddSwaggerGen()
         .RegisterRepositories()
-        .AddSignalR();
+        .AddSignalR().AddJsonProtocol(options =>    // чтобы попасть в метод хаба с клиента с enum'кой
+        {
+            options.PayloadSerializerOptions.Converters
+                   .Add(new JsonStringEnumConverter());
+        });
 
     builder.Services.AddEvaluationServices();
 
