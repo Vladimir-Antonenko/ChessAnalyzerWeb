@@ -1,4 +1,13 @@
-﻿// Добавление пользователя
+﻿// блокировка ввода данных
+function SetEnableStateFindControls()
+{
+    var childNodes = document.getElementById("FindBlockId").getElementsByTagName('*');
+    for (var node of childNodes) {
+        node.disabled = true;
+    }
+}
+
+// Добавление пользователя
 async function createUser(name, platform, since, until)
 {
     const findModel = {
@@ -53,6 +62,7 @@ async function RunAnalyze(controller)
     //платформа
     const selPl = document.getElementById("platformId");
     const platform = selPl.options[selPl.selectedIndex].value;
+    const platformName = selPl.options[selPl.selectedIndex].text;
 
     if (name && precision && platform)
     {
@@ -90,7 +100,7 @@ async function RunAnalyze(controller)
         // если запрос прошел нормально
         if (response.ok === true) {
             alert("Партии проанализированы");
-            window.location.replace(`/api/${name}/Lichess/Mistakes/1`)
+            window.location.replace(`/api/${name}/${platformName}/Mistakes/1`)
         }
     }
     else
@@ -131,10 +141,18 @@ const controller = new AbortController();
 LoadPlatforms();
 
 // отмена анализа партий
-document.getElementById("cancelBtn").addEventListener("click", () => CancelAnalyze(controller));
+document.getElementById("cancelBtn").addEventListener("click", () =>
+{ 
+    CancelAnalyze(controller);
+    document.getElementById("analyzeBtn").disabled = false;
+});
 
 // запуск анализа партий
-document.getElementById("analyzeBtn").addEventListener("click", () => RunAnalyze(controller));
+document.getElementById("analyzeBtn").addEventListener("click", () =>
+{
+    document.getElementById("analyzeBtn").disabled = true;
+    RunAnalyze(controller);
+});
 
 // сброс значений формы
 document.getElementById("resetBtn").addEventListener("click", () => reset());
@@ -157,5 +175,8 @@ document.getElementById("findBtn").addEventListener("click", async () =>
     const platform = selPl.options[selPl.selectedIndex].value;
 
     if (name && platform)
+    {
+        SetEnableStateFindControls();
         await createUser(name, platform, since, until);
+    }
 });

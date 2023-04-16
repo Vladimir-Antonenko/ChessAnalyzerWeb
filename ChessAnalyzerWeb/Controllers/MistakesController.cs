@@ -23,14 +23,15 @@ namespace ChessAnalyzerApi.Controllers
         /// <summary>
         /// Отправляет клиенту формируемую html страницу с диаграммами его ошибок
         /// </summary>
-        /// <param name="userName">Логин на lichess</param>
+        /// <param name="userName">Логин игрока на выбранной платформе</param>
+        /// <param name="platform">Шахматная платформа</param>
         /// <param name="numPage">Номер страницы ошибок</param>
         /// <returns></returns>
-        [Route("{userName}/Lichess/Mistakes/{numPage:int:min(1)}")]
+        [Route("{userName}/{platform}/Mistakes/{numPage:int:min(1)}")]
         [HttpGet]
-        public async Task<ContentResult> GetPagePlayerMistakes([FromRoute] string userName, [FromRoute] int numPage)
+        public async Task<ContentResult> GetPagePlayerMistakes([FromRoute] string userName, [FromRoute] ChessPlatform platform, [FromRoute] int numPage)
         {
-            var partMistakes = await _playerRepository.GetMistakesWithPagination(userName, numPage, pageSize: STANDART_PAGE_SIZE);
+            var partMistakes = await _playerRepository.GetMistakesWithPagination(userName, platform, numPage, pageSize: STANDART_PAGE_SIZE);
 
             string html = string.Empty;
             if (partMistakes.Anybody())

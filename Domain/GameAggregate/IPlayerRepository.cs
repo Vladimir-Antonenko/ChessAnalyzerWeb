@@ -6,5 +6,5 @@ public interface IPlayerRepository : IRepositoryBase<Player>
 {
     public Task<Player?> FindByName(string name);
     public Task<Player?> FindByNameOnPlatform(string name, ChessPlatform platform);
-    public Task<PagedList<Position>> GetMistakesWithPagination(string name, int pageNum, int pageSize);
+    public Task<PagedList<Position>> GetMistakesWithPagination(string name, ChessPlatform platform, int pageNum, int pageSize);
 }

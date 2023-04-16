@@ -63,7 +63,7 @@ try
         client =>
         {
             client.BaseAddress = new Uri(builder.Configuration["ChessComApiBaseUrl"]!);
-        });
+        }); //.AddHttpMessageHandler(((s) => s.GetService<MyCustomDelegatingHandler>()); // надо в эту сторону почитать
 
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ChessDB"));
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LichessAPI"));

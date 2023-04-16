@@ -13,7 +13,7 @@ public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
 
     public async Task<Player?> FindByName(string name)
     {
-        return await FindByCondition(x => x.Name == name, trackChanges: true)
+        return await FindByCondition(x => x.Name == name, trackChanges: true) // вместо FindByCondition можно .Where("Name==@0", name) в System.Linq.Dynamic.Core
                     .Include(x => x.Games)
                     .ThenInclude(x => x.Positions)
                     .FirstOrDefaultAsync();
@@ -27,9 +27,9 @@ public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
                     .FirstOrDefaultAsync();
     }
 
-    public async Task<PagedList<Position>> GetMistakesWithPagination(string name, int pageNum, int pageSize)
+    public async Task<PagedList<Position>> GetMistakesWithPagination(string name, ChessPlatform platform, int pageNum, int pageSize)
     {
-        return await FindByCondition(x => x.Name == name, trackChanges: false)
+        return await FindByCondition(x => x.Name == name && x.Games.Any(x => x.Platform.Equals(platform)), trackChanges: false)
                     .Include(x => x.Games)
                     .ThenInclude(x => x.Positions)
                     .SelectMany(x => x.Games)
