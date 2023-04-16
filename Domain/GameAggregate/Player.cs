@@ -38,8 +38,8 @@ public class Player
     /// <returns></returns>
     /// <exception cref="InvalidDataException"></exception>
     public Color GetPlayerColorInGame(Game game) =>
-        game.WhiteGamer.Equals(this.Name) ?
-            Color.White : game.BlackGamer.Equals(this.Name) ?
+        game.WhiteGamer.ToLower().Equals(this.Name.ToLower()) ?
+            Color.White : game.BlackGamer.ToLower().Equals(this.Name.ToLower()) ?
                 Color.Black : throw new InvalidDataException($"Игра {game.Pgn}\n не принадлежит игроку");
 
     /// <summary>
