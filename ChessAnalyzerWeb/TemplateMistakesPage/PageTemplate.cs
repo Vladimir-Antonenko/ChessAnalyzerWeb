@@ -81,7 +81,7 @@ internal class PageTemplate
                 Fen = pos.Fen,
                 Size = BOARD_SIZE.ToString(),
                 Id = index.ToString(),
-                Legend = string.Empty,
+                Legend = $"Был сделан ход {pos.YourMove}",
                 Solution = pos.PositionEvaluation?.OneMove ?? string.Empty,
                 Title = string.Empty
             };
