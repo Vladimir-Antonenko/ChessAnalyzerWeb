@@ -9,6 +9,7 @@ using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.ChessDB;
 using ChessAnalyzerApi.Services.ChessCom;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ChessAnalyzerApi.Services.Lichess.Mapping;
 using ChessAnalyzerApi.Services.ChessDB.Mapping;
 using ChessAnalyzerApi.Services.ChessCom.Mapping;
@@ -18,17 +19,19 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddControllers()
-        .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())); // для преобразования параметров с клиента в enum'ку
+        .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())); // for convert parameters from client to enum
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddDbContext<BaseContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-               .EnableSensitiveDataLogging()); 
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), 
+                            q=>q.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)) //Now, rather than making a single query with all the inner joins for adding navigation properties, it will split the query into one or more parts so that it doesn't impact the performance.
+               .EnableSensitiveDataLogging()
+               .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))); 
 
     builder.Services
         .AddEndpointsApiExplorer()
         .AddSwaggerGen()
         .RegisterRepositories()
-        .AddSignalR().AddJsonProtocol(options =>    // чтобы попасть в метод хаба с клиента с enum'кой
+        .AddSignalR().AddJsonProtocol(options =>    // call hub method from client with enum
         {
             options.PayloadSerializerOptions.Converters
                    .Add(new JsonStringEnumConverter());
@@ -63,7 +66,7 @@ try
         client =>
         {
             client.BaseAddress = new Uri(builder.Configuration["ChessComApiBaseUrl"]!);
-        }); //.AddHttpMessageHandler(((s) => s.GetService<MyCustomDelegatingHandler>()); // надо в эту сторону почитать
+        }); //.AddHttpMessageHandler(((s) => s.GetService<MyCustomDelegatingHandler>()); // надо будет прикрутить
 
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ChessDB"));
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LichessAPI"));
