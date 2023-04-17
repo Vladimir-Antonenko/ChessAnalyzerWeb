@@ -21,7 +21,7 @@ internal class PageTemplate
         _numPage = numPage < 1 ? 1 : numPage; // если меньше чем первая страница, то принудительно ставлю первую
         doc.Load(Path.Combine(Environment.CurrentDirectory, @"TemplateMistakesPage\ChessbaseTemplate.html"));
         CreateDiagramPart(mistakes);
-        EditLinkPart();
+        EditLinkPart(mistakes.TotalPages);
     }
 
     private void AddDiagramNode(HtmlNode diagram, string pathTo = "//body")
@@ -45,28 +45,31 @@ internal class PageTemplate
         }
     }
 
-    private void EditLinkPart()
+    private void EditLinkPart(int totalPages)
     {
-        int i = _numPage;
         var removeDigit = _link.LastIndexOf("/");
         var link = _link.Remove(removeDigit, _link.Length - removeDigit);
 
         var backLink = doc.GetElementbyId("link1");
         var nextLink = doc.GetElementbyId("link2");
 
-        if (int.Parse(nextLink.GetAttributeValue("alt", "2")) == i)
+        if (_numPage <= 1) // первичная инициализация
         {
-            nextLink.SetAttributeValue("href", $"{link}/{i}");
-            nextLink.SetAttributeValue("alt", $"{i}");
-            backLink.SetAttributeValue("href", $"{link}/{--i}");
-            backLink.SetAttributeValue("alt", $"{i}");
+            backLink.SetAttributeValue("href", $"{link}/{1}");
+            nextLink.SetAttributeValue("href", $"{link}/{2}");
         }
         else
         {
-            backLink.SetAttributeValue("href", $"{link}/{i}");
-            backLink.SetAttributeValue("alt", $"{i}");
-            nextLink.SetAttributeValue("href", $"{link}/{++i}");
-            nextLink.SetAttributeValue("alt", $"{i}");
+            if(_numPage >= totalPages)
+            {
+                backLink.SetAttributeValue("href", $"{link}/{ _numPage - 1 }");
+                nextLink.SetAttributeValue("href", $"{link}/{ _numPage }");
+            }
+            else
+            {
+                backLink.SetAttributeValue("href", $"{link}/{ _numPage - 1 }");
+                nextLink.SetAttributeValue("href", $"{link}/{ _numPage + 1 }");
+            }
         }
     }
 
@@ -81,9 +84,9 @@ internal class PageTemplate
                 Fen = pos.Fen,
                 Size = BOARD_SIZE.ToString(),
                 Id = index.ToString(),
-                Legend = $"Был сделан ход {pos.YourMove}",
+                Legend = string.Empty,
                 Solution = pos.PositionEvaluation?.OneMove ?? string.Empty,
-                Title = string.Empty
+                Title = $"Был сделан ход {pos.YourMove}"
             };
             diagrams.Add(CbDiagramHtml.Create(cbDiagram));
         }

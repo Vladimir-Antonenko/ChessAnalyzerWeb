@@ -75,6 +75,8 @@ async function RunAnalyze(controller)
 
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/notifications")
+            .withAutomaticReconnect() // 0, 2, 10 и 30 секунд паузы между попытками реконнекта и потом отваливается окончательно
+            .configureLogging(signalR.LogLevel.Information)
             .build();
 
         hubConnection.start().then(() => {
