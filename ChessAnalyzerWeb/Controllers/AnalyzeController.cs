@@ -41,16 +41,17 @@ namespace ChessAnalyzerApi.Controllers
 
             var pgnService = _pgnServiceAccessor(findModel.platform); // получаем соответствующий сервис для загрузки игр
 
-            //AddProgressHandlerEvents(LichessService.processMsgHander); // было раньше (пока ещё не прикрутил прогресс загрузки)
             await player.GetGamesFromPgn(pgnService, findModel.since, findModel.until);
-            //RemoveProgressHandlerEvents(LichessService.processMsgHander);
 
-            // Из старого проекта (наподобие переделать)
+            #region Что тут не сделано ещё
+            // пока ещё не прикрутил прогресс загрузки
+            // Из старого проекта (наподобие переделать ток для сокета)
             ////private void HttpReceiveProgressEvent(object? sender, HttpProgressEventArgs e)
             ////{
             ////    ProgressBarValue = e.ProgressPercentage;// заполняем 
             ////    InfoLoad = $"Загружено: {e.BytesTransferred / 1024} Кбайт / {e.TotalBytes / 1024} Кбайт"; //Выводим в лейбл информацию о процессе загрузки
             ////}
+            #endregion
 
             await _playerRepository.Save();
             var anyGames = player.HaveAnyGamesOnPlatform(findModel.platform, findModel.since, findModel.until);
