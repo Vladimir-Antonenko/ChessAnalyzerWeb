@@ -10,7 +10,7 @@ public class FindPlayerGamesModel
     /// Логин игрока на шахматной платформе, партии которого мы ищем
     /// </summary>
     [Required(AllowEmptyStrings = false, ErrorMessage = "Обязательное поле!")]
-    [StringLength(maximumLength: 50, ErrorMessage = "Длина логина должна в диапазоне [1, 50] символов!", MinimumLength = 1)]
+    [StringLength(maximumLength: 50, ErrorMessage = "Длина логина должна быть в диапазоне [1, 50] символов!", MinimumLength = 1)]
     public string userName { get; set; }
 
     /// <summary>
