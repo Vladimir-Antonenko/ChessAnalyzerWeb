@@ -21,16 +21,16 @@ public class PlayerRepository : RepositoryBase<Player>, IPlayerRepository
 
     public async Task<Player?> FindByNameOnPlatform(string name, ChessPlatform platform)
     {
-        return await FindByCondition(x => x.Name == name && x.Games.Any(x => x.Platform.Equals(platform)), trackChanges: true)
-                    .Include(x => x.Games)
+        return await FindByCondition(x => x.Name == name, trackChanges: true)
+                    .Include(x => x.Games.Where(g => g.Platform.Equals(platform)))
                     .ThenInclude(x => x.Positions)
                     .FirstOrDefaultAsync();
     }
 
     public async Task<PagedList<Position>> GetMistakesWithPagination(string name, ChessPlatform platform, int pageNum, int pageSize)
     {
-        return await FindByCondition(x => x.Name == name && x.Games.Any(x => x.Platform.Equals(platform)), trackChanges: false)
-                    .Include(x => x.Games)
+        return await FindByCondition(x => x.Name == name, trackChanges: false)
+                    .Include(x => x.Games.Where(g => g.Platform.Equals(platform)))
                     .ThenInclude(x => x.Positions)
                     .SelectMany(x => x.Games)
                     .SelectMany(x => x.Positions.Where(x => x.IsMistake)) // фильтрую в SelectMany (в ThenInclude нельзя)
