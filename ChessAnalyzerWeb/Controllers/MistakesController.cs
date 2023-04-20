@@ -1,6 +1,8 @@
 ﻿using Domain.Extensions;
 using Domain.GameAggregate;
 using Microsoft.AspNetCore.Mvc;
+using ChessAnalyzerApi.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Http.Extensions;
 using ChessAnalyzerApi.TemplateMistakesPage;
 
@@ -11,13 +13,16 @@ namespace ChessAnalyzerApi.Controllers
     public class MistakesController : ControllerBase
     {
         private const int STANDART_PAGE_SIZE = 6;
+        private static readonly SemaphoreSlim semaphore = new(1, 1);
         private readonly IPlayerRepository _playerRepository;
         private readonly ILogger<AnalyzeController> _logger;
+        private readonly IMemoryCache _cache; //IMemoryCacheService задан как singletone!
 
-        public MistakesController(IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
+        public MistakesController(IPlayerRepository playerRepository, ILogger<AnalyzeController> logger, IMemoryCacheService cacheService)
         {
             _playerRepository = playerRepository;
             _logger = logger;
+            _cache = cacheService.Cache;
         }
 
         /// <summary>
@@ -31,17 +36,53 @@ namespace ChessAnalyzerApi.Controllers
         [HttpGet]
         public async Task<ContentResult> GetPagePlayerMistakes([FromRoute] string userName, [FromRoute] ChessPlatform platform, [FromRoute] int numPage)
         {
-            var partMistakes = await _playerRepository.GetMistakesWithPagination(userName, platform, numPage, pageSize: STANDART_PAGE_SIZE);
+            string htmlPageCacheKey = $"{platform}{userName}";
 
-            string html = string.Empty;
-            if (partMistakes.Anybody())
+            _logger.Log(LogLevel.Information, "Пытаюсь извлечь страницу ошибок пользователя {0} на платформе {1} из кэша.", userName, platform);
+
+            if (_cache.TryGetValue(htmlPageCacheKey, out string? html))
             {
-                var mistakesUrl = HttpContext.Request.GetDisplayUrl();
-                html = PageTemplate.Create(partMistakes, numPage, requestUrl: mistakesUrl).GetHtml();
+                _logger.Log(LogLevel.Information, "Страница найдена в кэше.");
+            }
+            else
+            {
+                try
+                {
+                    await semaphore.WaitAsync(); // с семафором для того чтобы управлять одновременным доступом к кэшу в памяти
+                    if (_cache.TryGetValue(htmlPageCacheKey, out html))
+                    {
+                        _logger.Log(LogLevel.Information, "Страница ошибок найдена в кэше.");
+                    }
+                    else
+                    {
+                        _logger.Log(LogLevel.Information, "Страница не найдена в кэше. Создаю новую.");
+
+
+                        var partMistakes = await _playerRepository.GetMistakesWithPagination(userName, platform, numPage, pageSize: STANDART_PAGE_SIZE);
+
+                        if (partMistakes.Anybody())
+                        {
+                            var mistakesUrl = HttpContext.Request.GetDisplayUrl();
+                            html = PageTemplate.Create(partMistakes, numPage, requestUrl: mistakesUrl).GetHtml();
+                        }
+
+                        // с размерами надо поиграть
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                                .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                                .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                                .SetPriority(CacheItemPriority.Normal);
+                                //.SetSize(1024);
+
+                        _cache.Set(htmlPageCacheKey, html, cacheEntryOptions);
+                    }
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
             }
 
-            return Content(html, "text/html");
-
+            return Content(html ?? string.Empty, "text/html");
             // return Redirect("/Home/Index");
         }
     }

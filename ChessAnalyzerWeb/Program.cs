@@ -80,6 +80,9 @@ try
                 config.AddProfile<ChessComPgnProfile>();
             });
 
+    builder.Services.AddMemoryCache();
+    builder.Services.AddSingleton<IMemoryCacheService, MistakesCacheService>();
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -90,7 +93,13 @@ try
     }
 
     app.UseDefaultFiles();
-    app.UseStaticFiles();
+    app.UseStaticFiles(new StaticFileOptions() 
+    { 
+        OnPrepareResponse = cfg =>
+        {
+            cfg.Context.Response.Headers.Add("Cache-Control", "public,max-age=300"); // 300 sec or 10 min
+        }
+    });
     app.UseCors(cfg => cfg.AllowAnyOrigin()); // пока так для тестирования
 
     app.UseHttpsRedirection();

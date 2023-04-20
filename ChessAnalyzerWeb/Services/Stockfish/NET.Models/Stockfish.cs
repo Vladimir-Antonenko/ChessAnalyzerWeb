@@ -2,7 +2,7 @@
 
 namespace ChessAnalyzerApi.Services.Stockfish.NET.Models;
 
-public class Stockfish : IStockfish, IPositionEvaluation
+public sealed class Stockfish : IStockfish, IPositionEvaluation
 {
     public enum Color
     {

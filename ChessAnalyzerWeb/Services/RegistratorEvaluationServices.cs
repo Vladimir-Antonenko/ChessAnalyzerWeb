@@ -1,8 +1,6 @@
 ﻿using Domain.GameAggregate;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.ChessDB;
-using Stockfish = ChessAnalyzerApi.Services.Stockfish.NET.Models.Stockfish;
-using ChessAnalyzerApi.Services.Stockfish.NET.Models;
 
 namespace ChessAnalyzerApi.Services;
 
@@ -19,6 +17,5 @@ public static class RegistratorEvaluationServices
                     .AddScoped<IPositionEvaluation, ChessDBService>()
                     .AddSingleton<IPositionEvaluation, Stockfish.NET.Models.Stockfish>();
 
-    // на очереди ещё одни возможные api описанные тут https://snyk.io/advisor/npm-package/chess-web-api
-    // и БД с оценками (но без ходов)
+    // на очереди ещё одни возможные api и БД с оценками (но без ходов)
 }
