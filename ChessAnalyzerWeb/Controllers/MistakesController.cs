@@ -16,7 +16,7 @@ namespace ChessAnalyzerApi.Controllers
         private static readonly SemaphoreSlim semaphore = new(1, 1);
         private readonly IPlayerRepository _playerRepository;
         private readonly ILogger<AnalyzeController> _logger;
-        private readonly IMemoryCache _cache; //IMemoryCacheService задан как singletone!
+        private readonly IMemoryCache _cache;
 
         public MistakesController(IPlayerRepository playerRepository, ILogger<AnalyzeController> logger, IMemoryCacheService cacheService)
         {
@@ -38,11 +38,11 @@ namespace ChessAnalyzerApi.Controllers
         {
             string htmlPageCacheKey = $"{platform}{userName}";
 
-            _logger.Log(LogLevel.Information, "Пытаюсь извлечь страницу ошибок пользователя {0} на платформе {1} из кэша.", userName, platform);
+            _logger.LogInformation("Пытаюсь извлечь страницу ошибок пользователя {0} на платформе {1} из кэша.", userName, platform);
 
             if (_cache.TryGetValue(htmlPageCacheKey, out string? html))
             {
-                _logger.Log(LogLevel.Information, "Страница найдена в кэше.");
+                _logger.LogInformation("Страница найдена в кэше.");
             }
             else
             {
@@ -51,11 +51,11 @@ namespace ChessAnalyzerApi.Controllers
                     await semaphore.WaitAsync(); // с семафором для того чтобы управлять одновременным доступом к кэшу в памяти
                     if (_cache.TryGetValue(htmlPageCacheKey, out html))
                     {
-                        _logger.Log(LogLevel.Information, "Страница ошибок найдена в кэше.");
+                        _logger.LogInformation("Страница ошибок найдена в кэше.");
                     }
                     else
                     {
-                        _logger.Log(LogLevel.Information, "Страница не найдена в кэше. Создаю новую.");
+                        _logger.LogInformation("Страница не найдена в кэше. Создаю новую.");
 
 
                         var partMistakes = await _playerRepository.GetMistakesWithPagination(userName, platform, numPage, pageSize: STANDART_PAGE_SIZE);
@@ -83,7 +83,6 @@ namespace ChessAnalyzerApi.Controllers
             }
 
             return Content(html ?? string.Empty, "text/html");
-            // return Redirect("/Home/Index");
         }
     }
 }
