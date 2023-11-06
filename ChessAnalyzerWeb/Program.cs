@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using ChessAnalyzerApi.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using ChessAnalyzerApi.Configurations;
 using ChessAnalyzerApi.Services.Analyze;
 using ChessAnalyzerApi.Services.Lichess;
 using ChessAnalyzerApi.Services.ChessDB;
@@ -18,9 +19,11 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.AddSerilogWithELK();
+
     builder.Services.AddControllers()
         .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())); // for convert parameters from client to enum
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
     builder.Services.AddDbContext<BaseContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), 
                             q=>q.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)) //Now, rather than making a single query with all the inner joins for adding navigation properties, it will split the query into one or more parts so that it doesn't impact the performance.
@@ -31,7 +34,8 @@ try
         .AddEndpointsApiExplorer()
         .AddSwaggerGen()
         .RegisterRepositories()
-        .AddSignalR().AddJsonProtocol(options =>    // call hub method from client with enum
+        .AddSignalR()
+        .AddJsonProtocol(options =>    // call hub method from client with enum
         {
             options.PayloadSerializerOptions.Converters
                    .Add(new JsonStringEnumConverter());
@@ -97,7 +101,7 @@ try
     { 
         OnPrepareResponse = cfg =>
         {
-            cfg.Context.Response.Headers.Add("Cache-Control", "public,max-age=300"); // 300 sec or 10 min
+            cfg.Context.Response.Headers.Add("Cache-Control", "public,max-age=300"); // 300 sec or 5 min
         }
     });
     app.UseCors(cfg => cfg.AllowAnyOrigin()); // пока так для тестирования
@@ -111,5 +115,10 @@ try
 }
 catch(Exception ex)
 {
-   Console.WriteLine(ex.ToString());
+  //  logger.Fatal(ex);
+    throw;
 }
+//finally
+//{
+//    NLog.LogManager.Shutdown();
+//}

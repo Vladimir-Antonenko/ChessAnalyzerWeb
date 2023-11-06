@@ -14,7 +14,7 @@ namespace ChessAnalyzerApi.Controllers
         private readonly ILogger<AnalyzeController> _logger;
         private readonly Func<ChessPlatform, IPgn> _pgnServiceAccessor; // для паттерна стратегия
 
-        // логин для проверки nightQueen111
+        // логин для проверки Jora_Barygin123 или nightQueen111
         public AnalyzeController(Func<ChessPlatform, IPgn> pgnServiceAccessor, IAnalyzeService analyzeService, IPlayerRepository playerRepository, ILogger<AnalyzeController> logger)
         {
             _playerRepository = playerRepository;
@@ -32,6 +32,8 @@ namespace ChessAnalyzerApi.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> FindPlayerGames([FromBody] FindPlayerGamesModel findModel)
         {
+            _logger.LogInformation("Ищем игрока {@findModel}", findModel); // @ - оператор деструктуризации, нужен для записи json в elastic
+
             var player = await _playerRepository.FindByName(findModel.userName);
             if (player is null)
             {
