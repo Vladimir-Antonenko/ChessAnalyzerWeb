@@ -1,8 +1,7 @@
 ﻿using Domain.GameAggregate;
-using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace ChessAnalyzerApi.Models;
+namespace ChessAnalyzerApi.Controllers.Analyze.Models;
 
 public class AnalyzeInfoModel
 {
