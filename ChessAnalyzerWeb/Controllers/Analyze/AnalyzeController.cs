@@ -1,9 +1,9 @@
 using Domain.GameAggregate;
-using ChessAnalyzerApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using ChessAnalyzerApi.Services.Analyze;
+using ChessAnalyzerApi.Controllers.Analyze.Models;
 
-namespace ChessAnalyzerApi.Controllers
+namespace ChessAnalyzerApi.Controllers.Analyze
 {
     [ApiController]
     [Route("api")]
@@ -79,7 +79,7 @@ namespace ChessAnalyzerApi.Controllers
             await _analyzeService.RunAnalyzePlayerGames(player, infoModel.precision, cancelToken);
 
             await _playerRepository.Save(); // Пока прикручен хард стокфиш (так мы гарантируем наличие оценки в любом случае). Если оценки позиции не будет - может выдать исключение (например не найдена на личессе)!
-            
+
             return Ok();
         }
 
@@ -94,7 +94,7 @@ namespace ChessAnalyzerApi.Controllers
             var platforms = await Task.Run(() =>
                 Enum.GetValues(typeof(ChessPlatform))
                .Cast<ChessPlatform>()
-               .ToDictionary(t => (int)t, t => t.ToString()) 
+               .ToDictionary(t => (int)t, t => t.ToString())
             );
 
             return Ok(platforms);

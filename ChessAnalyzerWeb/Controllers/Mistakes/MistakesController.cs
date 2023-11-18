@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Http.Extensions;
 using ChessAnalyzerApi.TemplateMistakesPage;
 
-namespace ChessAnalyzerApi.Controllers
+namespace ChessAnalyzerApi.Controllers.Mistakes
 {
     [ApiController]
     [Route("api")]
@@ -15,10 +15,10 @@ namespace ChessAnalyzerApi.Controllers
         private const int STANDART_PAGE_SIZE = 6;
         private static readonly SemaphoreSlim semaphore = new(1, 1);
         private readonly IPlayerRepository _playerRepository;
-        private readonly ILogger<AnalyzeController> _logger;
+        private readonly ILogger<MistakesController> _logger;
         private readonly IMemoryCache _cache;
 
-        public MistakesController(IPlayerRepository playerRepository, ILogger<AnalyzeController> logger, IMemoryCacheService cacheService)
+        public MistakesController(IPlayerRepository playerRepository, ILogger<MistakesController> logger, IMemoryCacheService cacheService)
         {
             _playerRepository = playerRepository;
             _logger = logger;
@@ -71,7 +71,7 @@ namespace ChessAnalyzerApi.Controllers
                                 .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                                 .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                                 .SetPriority(CacheItemPriority.Normal);
-                                //.SetSize(1024);
+                        //.SetSize(1024);
 
                         _cache.Set(htmlPageCacheKey, html, cacheEntryOptions);
                     }

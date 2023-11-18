@@ -1,8 +1,7 @@
 ﻿using Domain.GameAggregate;
-using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace ChessAnalyzerApi.Models;
+namespace ChessAnalyzerApi.Controllers.Analyze.Models;
 
 public class FindPlayerGamesModel
 {
@@ -17,7 +16,7 @@ public class FindPlayerGamesModel
     /// Шахматная платформа на которой ищем игру
     /// </summary>
     [Required(ErrorMessage = "Обязательное поле!")]
-  //  [JsonConverter(typeof(JsonStringEnumConverter))]
+    //  [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChessPlatform platform { get; set; }
 
     /// <summary>

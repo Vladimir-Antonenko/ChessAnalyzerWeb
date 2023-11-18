@@ -3,6 +3,7 @@ using Domain.GameAggregate;
 using ChessAnalyzerApi.Hubs;
 using System.Net.Http.Headers;
 using ChessAnalyzerApi.Services;
+using ChessAnalyzerApi.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using ChessAnalyzerApi.Configurations;
@@ -25,10 +26,10 @@ try
         .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())); // for convert parameters from client to enum
 
     builder.Services.AddDbContext<BaseContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), 
-                            q=>q.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)) //Now, rather than making a single query with all the inner joins for adding navigation properties, it will split the query into one or more parts so that it doesn't impact the performance.
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"),
+                            q => q.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)) //Now, rather than making a single query with all the inner joins for adding navigation properties, it will split the query into one or more parts so that it doesn't impact the performance.
                .EnableSensitiveDataLogging()
-               .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))); 
+               .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning)));
 
     builder.Services
         .AddEndpointsApiExplorer()
@@ -46,7 +47,7 @@ try
     // For strategy!
     builder.Services.AddTransient<LichessService>();
     builder.Services.AddTransient<ChessComService>();
-    builder.Services.AddScoped<Func<ChessPlatform, IPgn>> (serviceProvider => key =>
+    builder.Services.AddScoped<Func<ChessPlatform, IPgn>>(serviceProvider => key =>
     {
         return key switch
         {
@@ -77,45 +78,48 @@ try
     builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ChessComAPI"));
 
     builder.Services.AddAutoMapper(config =>
-            {
-                config.AddProfile<LichessEvaluationProfile>();
-                config.AddProfile<LichessPgnProfile>();
-                config.AddProfile<QueryPvProfile>();
-                config.AddProfile<ChessComPgnProfile>();
-            });
+    {
+        config.AddProfile<LichessEvaluationProfile>();
+        config.AddProfile<LichessPgnProfile>();
+        config.AddProfile<QueryPvProfile>();
+        config.AddProfile<ChessComPgnProfile>();
+    });
 
     builder.Services.AddMemoryCache();
     builder.Services.AddSingleton<IMemoryCacheService, MistakesCacheService>();
+    builder.Services.AddScoped<LoggingMiddleware>();
 
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+    else
+    {
+        app.UseMiddleware<LoggingMiddleware>();
+    }
 
+    //app.UseMiddleware<LoggingMiddleware>();
     app.UseDefaultFiles();
-    app.UseStaticFiles(new StaticFileOptions() 
-    { 
+    app.UseStaticFiles(new StaticFileOptions()
+    {
         OnPrepareResponse = cfg =>
         {
             cfg.Context.Response.Headers.Add("Cache-Control", "public,max-age=300"); // 300 sec or 5 min
         }
     });
     app.UseCors(cfg => cfg.AllowAnyOrigin()); // пока так для тестирования
-
     app.UseHttpsRedirection();
-
     app.MapControllers();
     app.MapHub<NotificationHub>("/notifications");
 
     app.Run();
 }
-catch(Exception ex)
+catch (Exception ex)
 {
-  //  logger.Fatal(ex);
+    //  logger.Fatal(ex);
     throw;
 }
 //finally
