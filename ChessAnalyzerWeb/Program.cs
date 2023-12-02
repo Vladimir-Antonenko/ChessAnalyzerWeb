@@ -87,7 +87,7 @@ try
 
     builder.Services.AddMemoryCache();
     builder.Services.AddSingleton<IMemoryCacheService, MistakesCacheService>();
-    builder.Services.AddScoped<LoggingMiddleware>();
+    // builder.Services.AddScoped<LoggingMiddleware>(); // для Imiddleware
 
     var app = builder.Build();
 
@@ -98,10 +98,10 @@ try
     }
     else
     {
-        app.UseMiddleware<LoggingMiddleware>();
+        app.UseMiddleware<LoggingMiddleware>(); // только в release
     }
 
-    //app.UseMiddleware<LoggingMiddleware>();
+    // app.UseMiddleware<LoggingMiddleware>();
     app.UseDefaultFiles();
     app.UseStaticFiles(new StaticFileOptions()
     {
